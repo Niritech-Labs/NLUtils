@@ -2,7 +2,7 @@
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-from .Logger import NLLogger,ConColors
+from NLUtils.Logger import NLLogger,ConColors
 from pathlib import Path
 import shutil, subprocess
 class NLInstaller:
@@ -30,6 +30,7 @@ class NLInstaller:
     def Install(self):
         try:
             self.Logger.name = ' Installing'
+            print(self.targets)
             for target in self.targets:
                 if isinstance(target,str):
                     self.Logger.Info(target,ConColors.B,True)
@@ -94,8 +95,10 @@ class NLInstaller:
 
     def RunCommand(self,command:str,critical:bool):
         try:
+            self.Logger.Info(f"Running command {command}",ConColors.G,True)
             cmd = command.split(' ')
-            subprocess.run(cmd,check=True)
+
+            result = subprocess.run(cmd,check=True)
         except subprocess.CalledProcessError as E:
             self.Logger.Error(str(E),critical)
         except Exception as E:
@@ -103,7 +106,6 @@ class NLInstaller:
 
 
 
-            
     
 
 
