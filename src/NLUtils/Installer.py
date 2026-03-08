@@ -74,8 +74,6 @@ class NLInstaller:
             self.Logger.Error(str(E),True)
 
 
-inst = NLInstaller('install.targets')
-inst.Uninstall()
             
     
 
