@@ -93,10 +93,62 @@ class HyprlangParser(ParserRealizationFabric):
 
 class BlocksParser(ParserRealizationFabric):
     def __init__(self, production:bool, path):
-        super().__init__(production, path, 'hyprlang parser')
+        super().__init__(production, path, 'blocks parser')
 
     def Encode(self,data:Blocks):
         self.save(data.ToStr())
 
     def Decode(self) -> Blocks | None:
         return Blocks.FromStr(self.open())
+    
+
+class TargetsParser(ParserRealizationFabric):
+    def __init__(self, production:bool, path):
+        super().__init__(production, path, '.targets parser')
+
+    def Encode(self,data:Blocks):
+        pass
+
+    def Decode(self) -> Blocks | None:
+        lines = self.open()
+        if lines:
+            Decoded = Blocks('.targets')
+            lines = lines.split('\n')
+            currentBlock = None
+            for line in lines:
+                if currentBlock:
+                    if line.startswith('%'):
+                       Decoded.AddBlock(currentBlock)
+                       currentBlock = Block(line.lstrip('%'))
+                    else:
+                        parseResult = self.parseLine(line)
+                        if parseResult:
+                            currentBlock.AddParam(parseResult[0],parseResult[1])
+                else:
+                    if line.startswith('%'):
+                       currentBlock = Block(line.lstrip('%'))
+                    else:
+                        parseResult = self.parseLine(line)
+                        if parseResult:
+                            Decoded.AddParam(parseResult[0],parseResult[1])
+            if currentBlock:
+                Decoded.AddBlock(currentBlock)
+            return Decoded
+
+    def parseLine(self,line:str) -> tuple:
+        if line.startswith('#'):
+            return ['comment',line.lstrip('#')]
+        elif line.startswith('$'):
+            return ['command',line.lstrip('$')]
+        elif line.startswith('#P#'):
+            return ['print',line.lstrip('#P#')]
+        elif line.startswith('TRG:'):
+            return ['target',line.lstrip('TRG:')]
+        elif line.startswith('SML:'):
+            return ['links',line.lstrip('SML:')]
+        elif line.startswith('DIR:'):
+            return ['directory',line.lstrip('DIR:')]
+        else:
+            return None
+
+                

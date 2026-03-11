@@ -82,12 +82,24 @@ class Block:
         block.level += self.level
         self.blocks.append(block)
 
-    def AddParam(self,param:list):
-        self.params.append(param)
+    def AddParam(self,key,value):
+        self.params.append([key,value])
+
 
     def DeleteAllBlocks(self):
         self.blocks = []
 
+    def GetAllBlocks(self) -> list:
+        return self.blocks
+
+    def GetAllParams(self) -> list:
+        return self.params
+    
+    def SetBlocks(self,blocks:list['Block']):
+        self.blocks = blocks
+
+    def SetParams(self,params:list[list[object]]):
+        self.params = params
 
     def DeleteAllParams(self):
         self.params = []
@@ -102,7 +114,7 @@ class Block:
             block.level += self.level
             block.updateLevel()
 
-    def GetName(self):
+    def GetName(self) -> str:
         return self.name
 
             
@@ -130,93 +142,9 @@ class Block:
 
 
 
-class Blocks:
+class Blocks(Block):
     def __init__(self,name:str):
-        self.name = name
-        self.blocks:list[Block] = []
-        self.params:list[list] = []
-        self.level = 1
-
-    def FindParamRecursive(self,name:str) -> None | list:
-        """Recursive find"""
-        params = []
-        for param in self.params:
-            if param[0] == name:
-                params.append(param)
-
-        for block in self.blocks:
-            rparams = block.FindParamRecursive(name)
-            if rparams:
-                params += rparams
-
-        if params:
-            return params
-        else:
-            return None
-        
-    def DeleteMarkedObjects(self):
-        for param in list(self.params):
-            if param[0] == None:
-                self.params.remove(param)
-        for block in list(self.blocks):
-            block.DeleteMarkedObjects()
-            if block.name == None:
-                self.blocks.remove(block)
-        
-    def FindParam(self,name:str) -> None | list:
-        """Recursive find"""
-        params = []
-        for param in self.params:
-            if param[0] == name:
-                params.append(param)
-
-        if params:
-            return params
-        else:
-            return None
-            
-    def FindBlockRecursive(self,name:str) -> None | list:
-        """Recursive find"""
-        blocks = []
-        for block in self.blocks:
-            rblocks = block.FindBlockRecursive(name)
-            if rblocks:
-                blocks += rblocks
-            if block.name == name:
-                blocks.append(block)
-        
-        if blocks:
-            return blocks
-        else:
-            return None
-        
-    def FindBlock(self,name:str) -> None | list:
-        blocks = []
-        for block in self.blocks:
-            if block.name == name:
-                blocks.append(block)
-        
-        if blocks:
-            return blocks
-        else:
-            return None
-        
-    def AddBlock(self,block:Block):
-        block.level += self.level
-        self.blocks.append(block)
-
-    def AddParam(self,param:list):
-        self.params.append(param)
-
-    def DeleteAllBlocks(self):
-        self.blocks = []
-
-    def DeleteAllParams(self):
-        self.params = []
-
-    def GetName(self):
-        return self.name
-
+        super().__init__(name)
    
     @staticmethod
     def FromStr(data: str) -> 'Blocks':
