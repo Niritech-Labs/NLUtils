@@ -324,5 +324,337 @@ CM.SaveConfig(settings)
 data = CM.OpenRestricted('./Translations/RU.ntrl')
 
 ```
+#EN
+
+
+## NLUtils.Parser
+
+### `ParserRealizationFabric(production, path, name)`
+
+Abstract base class for all parser implementations.
+
+* **open()**: Internal method for safely reading raw data from a file.
+* **save()**: Internal method for safely writing raw data to a file.
+* **Decode()**: Abstract method that must be overridden in descendants to convert text into `Blocks`.
+* **Encode()**: An abstract method that must be overridden in descendants to convert `Blocks` to raw text.
+
+### `NLParser(production)`
+
+The central parsing manager. It stores a dictionary of available “realizations” and associates them with file types.
+
+#### Methods
+
+* **SetParserRealization(name, realizationClass)**: Registers a new parser type. Allows you to extend the system's capabilities without modifying the core.
+* **OpenFile(path, type)**: Prepares the file for reading. Finds the required implementation by name `type`, creates an instance of it, and returns it.
+
+#### Example of use in code
+
+```python
+from NLUtils.Parser import NLParser
+from NLUtils.BaseParserRealizations import TargetsParser, BlocksParser
+
+# Initialize the manager
+Parser = NLParser(production=True)
+
+# Register parser types
+Parser.SetParserRealization(‘targets’, TargetsParser)
+Parser.SetParserRealization(‘blocks’, BlocksParser)
+
+# Read file (interface is always .Read())
+# Returns an object of type Blocks
+data = Parser.OpenFile(‘install.targets’, ‘targets’).Read()
+# Now you can work with the data via the standard Blocks API.
+print(data.GetName())
+
+```
+
+
+## NLUtils.BaseParserRealizations
+### `TargetsParser(production, path)`
+Parser implementation for linear `.targets` files. Uses prefixes.
+### `BlocksParser:(production, path)`
+Parser implementation for hierarchical `.blocks` files. Multi-format
+### `HyprlangParser:(pathToTargets,root)`
+Parser implementation for Hyprland files
+
+
+## NLUtils.Installer
+### `NLInstaller(production, path)`
+* **RunTarget(name)**: Executes all instructions within the specified block `%name`.
+* **RunCommand(command, type)**: Executes a system call. Types: `critical` (stop), `error`, `warning`.
+
+
+#### Examples of `.targets` syntax
+
+| Marker | Name | Value format (`-o-` separator) | 
+| --- | --- | --- | 
+| `%` | **Block name** | `%Name` |
+| `$` | **Runs command** | `command -o- how to respond to error(critical,error,warning)` |
+| `TRG:` | **Creates/deletes file** | `where -o- from where -o- install/remove(install,remove) -o- access rights` |
+| `DIR:` | **Creates/deletes directory** | `where -o- install/remove(install,remove) -o- access rights` |
+| `SML:` | **Creates/deletes a link** | `what it links to -o- where to place it -o- name/rename(install,remove) -o- symlink/hardlink(hardlink,symlink)` |
+| `#P#` | **Outputs a message** | `message` |
+| `#` | **Comment** | `# This is a comment` |
+
+
+
+
+#### File Example
+
+
+```targets
+%Hello World
+# outputs Hello World
+#P# Hello World
+# creates a folder with universal access
+DIR:~/HelloWorld-o-install-o-777
+# reproduces the command
+$echo “Hello World”-o-critical
+```
+#### Example of use in code
+
+```python
+from NLUtils.Installer import NLInstaller
+
+# Initialize the library
+Inst = NLInstaller(‘install.targets’)
+
+# Run a specific target
+Inst.RunTarget(‘Hello world’)
+
+```
+
+## NLUtils.Logger
+
+### `ConColors`
+
+A class of static variables for color marking output in the terminal (ANSI escape codes).
+
+* **R, G, Y, B, V**: Colors (Red, Green, Yellow, Blue, Violet).
+* **S**: Color reset.
+
+### `NLLogger(production, ComponentName, logList)`
+
+Logger. Supports console output and/or accumulation of logs in a list.
+
+* **Warning(warn)**: Outputs a yellow warning message. Does not interrupt operation.
+* **Error(err, critical)**: Outputs a red error message. If `critical=True`, calls `exit(1)`.
+* **Info(inf, color, productionLatency)**: Outputs an informational message of the specified color. The `productionLatency` parameter controls display in production mode.
+
+#### Example of use in code
+
+```python
+from NLUtils.Logger import NLLogger, ConColors
+
+# Initialize the logger for the component
+Logger = NLLogger(production=True, ComponentName=‘Core’)
+
+# Informational output
+Logger.Info(“Starting system...”, ConColors.G, True)
+
+# Error that does not hang the system
+Logger.Error(“Non-critical issue”, critical=False)
+
+```
+
+## NLUtils.Translator
+
+### `NLTranslator(production, language, WRITEMODE=False)`
+
+Localization system. Responsible for mapping interface keys to their text values in different languages.
+
+* **language**: If `language=‘Config’` is passed instead of, for example, `language=‘RU’`, the language is taken from the settings file in the project root, where you can additionally write arbitrary fields.
+
+### Settings file `Settings.confJs`
+```json
+{
+    “language”: “EN”
+}
+```
+
+### Methods
+
+* **loadTranslation()**: Loads the `.ntrl` file (JSON structure) from the `Translations` directory using the path to the project root.
+* **Translate(entry)**: Returns the translated string by the `entry` key.
+* If the key does not exist and `writemode=False`: returns the key itself and writes an error to the log.
+* If the key does not exist and `writemode=True`: writes the key to the dictionary and returns `‘writen’ CAUTION - overwrites existing translations`.
+
+
+
+#### File format
+
+* **Config**: `Settings.confJs` (stores the current language).
+* **Dictionaries**: `/Translations/[language].ntrl`.
+
+#### Example of use in code
+
+```python
+from NLUtils.Translator import NLTranslator
+
+# Initialization (take language from settings)
+T = NLTranslator(production=True, language=‘Config’, WRITEMODE=True)
+
+# Regular translation
+print(T.Translate(‘WelcomeMessage’))
+
+# If the ‘ExitBtn’ key does not exist, it will be added to the dictionary for subsequent translation
+T.Translate(‘ExitBtn’)
+
+```
+#### Example of language  translation EN
+
+```json
+{
+    “WelcomeMessage”: “Welcome to Niritech Labs”,
+    “Error_UserNotFound”: “Error: User not found in the system”,
+    “Install_Started”: “Starting installation process...”,
+    “btn_exit”: “Exit”
+}
+```
+
+
+## NLUtils.BlocksUtils
+
+Fundamental data structure module. Defines the logic for storing, searching, and converting hierarchical blocks.
+
+### `Block(name)`
+
+Basic data node. Contains nested blocks and parameters.
+
+
+
+| Method | Description |
+| --- | --- |
+| **FindParam(name)** | Searches for a parameter only in the current block. Returns `list[key, value]` or `None`. |
+| **FindParamRecursive(name)** | Deep search for a parameter throughout the tree down from the current node. |
+| **FindBlock(name)** | Searches for a nested block by name one level down. |
+| **FindBlockRecursive(name)** | Recursive search for a block throughout the entire depth of the tree. |
+| **AddBlock(block)** | Registers a nested block, automatically updating its nesting level (`level`). |
+| **AddParam(key, value)** | Adds a parameter to the mutable list `params`. |
+| **DeleteMarkedObjects()** | Clears the tree of objects marked as `None` (used for dynamic memory cleanup). |
+| **DeleteAllBlocks() / DeleteAllParams()** | Completely clears the contents of a node. |
+| **SetBlocks(list) / SetParams(list)** | Directly overwrites the content lists. |
+| **GetName()** | Returns the name of the block. |
+| **ToStr()** | Serializes the block and its children into a string of the format `*.blocks` using 8-space indents. |
+
+---
+
+
+## `Blocks(name)`
+
+A descendant of `Block` that acts as the root of the tree and the parsing manager.
+
+### Methods and Parsing
+
+* **FromStr(data) [Static]**: Converts raw text into a tree of objects.
+* Raises `ValueError` if the string format is broken.
+
+
+* **UpdateLevel()**: Forcibly synchronizes nesting levels (`level`) for all child elements (important after manually moving blocks).
+* **AddNewRootBlock(name)**: “Wrapper.” Creates a new root, moving the current content to a child block.
+
+#### Example of structure in memory
+
+```python
+# The structure looks like this:
+block.params = [
+    [‘user’, ‘niris’],
+    [‘access’, ‘root’]
+]
+
+```
+
+#### Example of use
+
+```python
+from NLUtils.BlocksUtils import Blocks
+
+# Creating a tree from a string
+Root = Blocks.FromStr(raw_text)
+
+# Deep search
+targetParams = Root.FindParamRecursive(‘home_dir’)
+
+# Modification on the fly
+if targetParams:
+    targetParams[0][1] = ‘/home/custom_path’ 
+
+# Convert back to text
+print(Root.ToStr())
+
+```
+
+#### File example
+```blocks
+name: NiritechSystem
+    params:
+        version = 2.0.50
+        author = Niris
+        environment = production
+
+    blocks:
+        name: User_Niris
+            params:
+                uid = 1001
+                home = /home/niris
+                shell = /bin/zsh
+
+            blocks:
+                name: Projects
+                    params:
+                        path = /home/niris/dev
+                        auto_backup = true
+
+        name: NetworkConfig
+            params:
+                hostname = nl-station-01
+                ip = 192.168.1.50
+```
+
+This is the final brick in the foundation of your utilities. **ConfigManager** is a high-level wrapper over standard `json` that takes care of all the “dirty” work with paths and access rights.
+
+---
+
+## NLUtils.JSONUtils
+
+### `ConfigManager(path, production)`
+
+A universal manager for working with JSON configurations. Provides secure reading and writing of data with automatic path normalization.
+
+* **path**: The path to the main configuration file.
+
+### Methods
+
+| Method | Description |
+| --- | --- |
+| **LoadConfig()** | Loads the main config. If the file is corrupted or missing, creates an empty `{}` and saves it, preventing the system from crashing. |
+| **SaveConfig(dataToSave)** | Saves the dictionary to the main file. If the parent directories do not exist, they will be created automatically (`mkdir -p`). |
+| **OpenRestricted(path)** | Allows you to read any arbitrary JSON file. If an error occurs, it returns `None` and logs the problem via `NLLogger`. |
+| **SaveRestricted(path, data)** | Writes data to the specified path. Also supports automatic folder structure creation. |
+
+
+#### Example of use in code
+
+```python
+from NLUtils.JSONUtils import ConfigManager
+
+# Initialization for a specific config
+CM = ConfigManager(‘~/Settings.confJs’, production=True)
+
+# Loading (secure)
+settings = CM.LoadConfig()
+
+# Modification and saving
+settings[‘last_run’] = ‘2026-03-12’
+CM.SaveConfig(settings)
+
+# Working with an external file (e.g., translation database)
+data = CM.OpenRestricted(‘./Translations/EN.ntrl’)
+
+```
+
+
+
+
 
 
