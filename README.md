@@ -324,7 +324,7 @@ CM.SaveConfig(settings)
 data = CM.OpenRestricted('./Translations/RU.ntrl')
 
 ```
-#EN
+# EN
 
 
 ## NLUtils.Parser
