@@ -20,6 +20,7 @@ class ConfigManager():
             self.SaveConfig(defconf)
             return defconf
     
+# -o-
     def OpenRestricted(self,path):
         path = Path(path).expanduser().resolve()
         try:

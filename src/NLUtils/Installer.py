@@ -46,7 +46,7 @@ class NLInstaller:
                     self.Logger.Info(target[1],ConColors.V,True)
                 # file handler
                 elif target[0] == 'target':
-                    if target[1].count('-o-') == 3:
+                    if target[1].count('-o-') == 3:       
                         destination,source,opType,access = target[1].split('-o-')
                         dst = Path(self.root + str(Path(destination).expanduser()))
                         src = Path(source)
@@ -54,9 +54,11 @@ class NLInstaller:
 
                         if src.is_dir():
                             if opType == 'install':
+                                self.Logger.Info(f'installing dir {str(src)} to {str(dst)}',ConColors.G,True)
                                 shutil.copytree(str(source),str(dst))
                                 dst.chmod(mode)
                             elif opType == 'remove':
+                                self.Logger.Info(f'removing dir {str(dst)}',ConColors.G,True)
                                 if dst.exists():
                                     shutil.rmtree(str(dst))
                                 else:
@@ -64,9 +66,11 @@ class NLInstaller:
                             
                         elif src.is_file():
                             if opType == 'install':
+                                self.Logger.Info(f'installing file {str(src)} to {str(dst)}',ConColors.G,True)
                                 shutil.copy2(str(source),str(dst))
                                 dst.chmod(mode)
                             elif opType == 'remove':
+                                self.Logger.Info(f'removing file {str(dst)}',ConColors.G,True)
                                 if dst.exists():
                                     dst.unlink()
                                 else:
@@ -81,14 +85,17 @@ class NLInstaller:
                         ldst = Path(self.root + str(Path(linkDestination).expanduser()))
                         if opType == 'install':
                             if linkType == 'hardlink':
+                                self.Logger.Info(f'make hardlink {str(ldst)} ===> {str(dst)}',ConColors.G,True)
                                 ldst.hardlink_to(dst)
                             elif linkType == 'symlink':
+                                self.Logger.Info(f'make symlink {str(ldst)} ===> {str(dst)}',ConColors.G,True)
                                 ldst.symlink_to(dst)
                         elif opType == 'remove':
                             if ldst.exists():
+                                self.Logger.Info(f'unlinking link {str(ldst)}',ConColors.G,True)
                                 ldst.unlink()
                             else:
-                                self.Logger.Warning(f'File not found: {str(dst)}')  
+                                self.Logger.Warning(f'Link not found: {str(dst)}')  
                     else:
                         self.Logger.Warning(f'A broken line was found in the target: {blockName}')
                 #dir handler
@@ -99,10 +106,12 @@ class NLInstaller:
                         mode = int(access,8)
                             
                         if opType == 'install':
+                            self.Logger.Warning(f'creating dir: {str(dst)}')
                             dst.mkdir()
                             dst.chmod(mode)
                         elif opType == 'remove':
                             if dst.exists():
+                                self.Logger.Warning(f'removing dir: {str(dst)}')
                                 shutil.rmtree(str(dst))
                             else:
                                 self.Logger.Warning(f'Dir not found: {str(dst)}')

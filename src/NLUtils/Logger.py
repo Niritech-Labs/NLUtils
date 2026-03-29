@@ -13,11 +13,19 @@ class ConColors:
 
 
 class NLLogger:
-    def __init__(self, production: bool, ComponentName: str = '',logList:list = ['toConsole']):
+    class ConColors: 
+        R = "\033[91m"
+        G = "\033[92m"
+        Y = "\033[93m"
+        B = "\033[94m"
+        V = "\033[95m"
+        S = "\033[0m"
+    def __init__(self, production: bool, ComponentName: str = '',logList:list | None = None):
         self.production = production
         self.toLogList = False
-        self.logList = logList
-        if not 'toConsole' in logList:
+
+        if not logList is None:
+            self.logList = logList
             self.toLogList = True
         self.name = " " + ComponentName 
 
@@ -38,7 +46,7 @@ class NLLogger:
                 self.logList.append(f"{ConColors.R} Error{self.name}: {err}{ConColors.S}")
             print(f"{ConColors.R} Error{self.name}: {err}{ConColors.S}")
     
-    def Info(self,inf:str,color: ConColors, productionLatency: bool):
+    def Info(self,inf:str,color: ConColors | object, productionLatency: bool):
         if self.production:
             if productionLatency: 
                 if self.toLogList:

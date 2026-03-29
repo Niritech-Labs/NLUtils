@@ -35,6 +35,8 @@ class NLTranslator:
                 self.LOG.Error(str(e)+f", Can't load translation for this entry: {entry}",False)
                 return entry
             else:
-                self.Translation[entry] = 'writen'
+                self.Translation[entry] = '-o-writen-o-'
                 self.LOG.Info(f'Entry {entry} writen successfuly',ConColors.B,False)
-                return 'writen'
+                return '-o-writen-o-'
+
+# -o-

@@ -100,7 +100,8 @@ class Block:
 
     def SetParams(self,params:list[list[object]]):
         self.params = params
-
+# -o-
+# -o-
     def DeleteAllParams(self):
         self.params = []
 
