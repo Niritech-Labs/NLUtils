@@ -2,7 +2,7 @@
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-from .Logger import NLLogger
+from NLUtils.Logger import NLLogger
 import re
 
 class GigaRE:
@@ -17,30 +17,40 @@ class GigaRE:
                 return True 
         return False
 
-    def FindAndWrap(self,text:str,re_pattern:str,handleFunction,wrapSkeleton:str,blacklist:list[str] = []) -> list:
+    def FindAndWrap(self,text:str,re_pattern:str,handleFunction,wrapSkeleton:str | None,blacklist:list[str] = [],flags = re.DOTALL) -> list:
         self.Logger.Info(f'start finding pattern:{re_pattern}',NLLogger.ConColors.G,False)
-        pattern = re.compile(re_pattern,re.DOTALL)
+        pattern = re.compile(re_pattern,flags)
         patternResults = [m.group() for m in pattern.finditer(text)]
         result = []
-        self.Logger.Info(f'finded:{len(patternResults)}',NLLogger.ConColors.G,False)
+        self.Logger.Info(f'finded:{len(patternResults)}',NLLogger.ConColors.G,True)
         for patternResult in patternResults:
             self.Logger.Info(f'processing:{patternResult}',NLLogger.ConColors.B,False)
             if self.filtering(blacklist,patternResult):
                 self.Logger.Info('Filtered',NLLogger.ConColors.G,False)
                 continue
 
-            postprocessingResult = handleFunction(patternResult)
+            postprocessingResult = handleFunction(patternResult,self.Logger)
             if not postprocessingResult[0]:
                 self.Logger.Info('Not valid',NLLogger.ConColors.G,False)
                 continue
             
-            wrap = wrapSkeleton
-            for i in range(len(postprocessingResult)-1):
-                prt1,prt2 = wrap.split(f'-o-key{i+1}-o-')
-                wrap = prt1 + postprocessingResult[i+1] + prt2
+            if wrapSkeleton is None:
+                wrap = postprocessingResult[1]
+            else:
+                wrap = wrapSkeleton
+                for i in range(len(postprocessingResult)-2):
+                    prt1,prt2 = wrap.split(f'-o-key{i+1}-o-')
+                    wrap = prt1 + postprocessingResult[i+2] + prt2
+
+
+            self.Logger.Info(f'Result: {wrap}',NLLogger.ConColors.G,False)
             result.append(wrap)
         return result
                 
+
+class ReturnGREHelper:
+    def __init__(self):
+        pass
 
 
 

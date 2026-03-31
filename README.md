@@ -332,50 +332,46 @@ data = CM.OpenRestricted('./Translations/RU.ntrl')
 
 Класс для автоматического создания обёрток над текстом или полуавтоматического написания биндингов
 ### Метод
-**FindAndWrap(self,text:str,re_pattern:str,handleFunction,wrapSkeleton:str,blacklist:list[str] = []) -> list:** - занимается обработкой
+**FindAndWrap(self,text:str,re_pattern:str,handleFunction,wrapSkeleton:str | None,blacklist:list[str] = [],flags = re.DOTALL) -> list:** - занимается обработкой
 
 #### Пример использования
 
 ```python
 import re
 
-# 1. Шаблон (skeleton)
-# -o-key1-o- будет исходной валютой, -o-key2-o- — суммой в рублях
-skeleton = '<span class="price" title="Original: -o-key1-o-">~ -o-key2-o- руб.</span>'
-
-# 2. Функция обработки (handleFunction)
-def convert_to_rub(match_text):
-    # Допустим, курс 100 рублей за доллар
-    rate = 100 
+EnumsRE = r'enum\s+(\w+)\s*\{([^}]*)\};'
+def Enums(datainput,Logger):
+    name, body = re.search(r'enum\s+(\w+)\s*\{(.*?)\}', datainput, re.DOTALL).groups()
     
-    # Извлекаем число из строки (например, "100" из "100 USD")
-    amount = re.findall(r'\d+', match_text)
-    
-    if not amount:
-        return [False] # Не удалось обработать
-    
-    rub_value = int(amount[0]) * rate
-    
-    # Возвращаем: [Успех, Данные1, Данные2]
-    return [True, match_text, str(rub_value)]
+    if '=' in datainput:
+        defenum = f'    nb::enum_<{name}>(m, "{name}",nb::is_flag())\n'
+    else:
+        defenum = f'    nb::enum_<{name}>(m, "{name}")\n' 
 
+    keys = re.findall(r'(NK_\w+)\b(?!\s*=)', body)
+    if not keys:
+        keys = re.findall(r'(NK_\w+)\b(?=\s*=)', body)
 
-gre = GigaRE()
+    for key in keys:
+        defenum += f'        .value("{key}", {key})\n'
 
-text_content = "Купил кофе за 5 USD и обед за 15 USD. Еще была закупка на 1000 EUR."
-pattern = r'\d+\sUSD' # Ищем только суммы в USD
-black_list = ["1000"] # Игнорируем крупные суммы для примера
+    defenum += '        .export_values();\n'
 
-results = gre.FindAndWrap(
-    text=text_content,
-    re_pattern=pattern,
-    handleFunction=convert_to_rub,
-    wrapSkeleton=skeleton,
-    blacklist=black_list
-)
+    return (True,defenum)
 
-for item in results:
-    print(item)
+from NLUtils.TextUtils import GigaRE
+from handleFunctions import *
+gre = GigaRE(True)
+file = ''
+with open('nuklear_pp.h','r') as f:
+    file = f.read()
+fl = []
+enums = gre.FindAndWrap(file,EnumsRE,Enums,None)
+fl.append('\n'.join(enums))
+res = fl[0]
+
+with open('bindings/npnuklear.cpp','w') as f:
+    f.write(res)
 
 ```
 # EN
@@ -714,49 +710,46 @@ data = CM.OpenRestricted(‘./Translations/EN.ntrl’)
 
 Class for automatically creating text wrappers or semi-automatically writing bindings
 ### Method
-**FindAndWrap(self,text:str,re_pattern:str,handleFunction,wrapSkeleton:str,blacklist:list[str] = []) -> list:** - handles processing
+**FindAndWrap(self,text:str,re_pattern:str,handleFunction,wrapSkeleton:str | None,blacklist:list[str] = [],flags = re.DOTALL) -> list:** - handles processing
 
 #### Usage example
 
 ```python
 import re
 
-# 1. Pattern (skeleton)
-# -o-key1-o- will be the original currency, -o-key2-o- will be the amount in rubles
-skeleton = '<span class="price" title="Original: -o-key1-o-">~ -o-key2-o- rubles.</span>'
+EnumsRE = r'enum\s+(\w+)\s*\{([^}]*)\};'
+def Enums(datainput,Logger):
+    name, body = re.search(r'enum\s+(\w+)\s*\{(.*?)\}', datainput, re.DOTALL).groups()
+    
+    if '=' in datainput:
+        defenum = f'    nb::enum_<{name}>(m, "{name}",nb::is_flag())\n'
+    else:
+        defenum = f'    nb::enum_<{name}>(m, "{name}")\n' 
 
-# 2. Processing function (handleFunction)
-def convert_to_rub(match_text):
-# Assume the exchange rate is 100 rubles per dollar
-rate = 100
+    keys = re.findall(r'(NK_\w+)\b(?!\s*=)', body)
+    if not keys:
+        keys = re.findall(r'(NK_\w+)\b(?=\s*=)', body)
 
-# Extract a number from a string (e.g., "100" from "100 USD")
-amount = re.findall(r'\d+', match_text)
+    for key in keys:
+        defenum += f'        .value("{key}", {key})\n'
 
-if not amount:
-return [False] # Failed to process
+    defenum += '        .export_values();\n'
 
-rub_value = int(amount[0]) * rate
+    return (True,defenum)
 
-# Return: [Success, Data1, Data2]
-return [True, match_text, str(rub_value)]
+from NLUtils.TextUtils import GigaRE
+from handleFunctions import *
+gre = GigaRE(True)
+file = ''
+with open('nuklear_pp.h','r') as f:
+    file = f.read()
+fl = []
+enums = gre.FindAndWrap(file,EnumsRE,Enums,None)
+fl.append('\n'.join(enums))
+res = fl[0]
 
-gre = GigaRE()
-
-text_content = "Bought coffee for 5 USD and lunch for 15 USD. I also made a purchase for 1000 EUR."
-pattern = r'\d+\sUSD' # Search only for amounts in USD
-black_list = ["1000"] # Ignore large amounts for the sake of this example
-
-results = gre.FindAndWrap(
-text=text_content,
-re_pattern=pattern,
-handleFunction=convert_to_rub,
-wrapSkeleton=skeleton,
-blacklist=black_list
-)
-
-for item in results:
-print(item)
+with open('bindings/npnuklear.cpp','w') as f:
+    f.write(res)
 
 ```
 
