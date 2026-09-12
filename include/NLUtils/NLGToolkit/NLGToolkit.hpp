@@ -11,16 +11,25 @@ struct OPENGLConfig {
     uint32_t Profile = GLFW_OPENGL_CORE_PROFILE;
 };
 
+enum NLState {
+    ENABLED,
+    DISABLED
+};
+
 struct NuklearShader {
     std::string path = "internal";
     std::string basedir = "./";
     std::string version = "330 core";
-
+    bool smoothing = false;
 };
 
 struct NLGTFont {
     std::string path;
     int size;
+};
+struct NLGTVSync {
+    NLState state = NLState::ENABLED;
+    uint divisor = 1;
 };
 
 struct NLGTConfig {
@@ -32,13 +41,23 @@ struct NLGTConfig {
     NuklearShader NS;
     GLFWCallbacksConfig calbacksConfig;
     std::unordered_map<std::string,std::pair<std::string,int>> fonts;
+    struct nk_color bgcolor;
+
+    NLGTVSync VSync;
 
 };
 
+struct NLGTContext {
+    NKGLI glimpl;
+    NLLogger Logger;
+    GLFWwindow* window;
+    AssetManager assets;
+    nk_context* nkctx;
+};
 
 class NLGT {
 public:
-    nk_context* Init(NLGTConfig config);
+    NLGTContext* Init(NLGTConfig config);
 
     bool ShouldClose();
     void BeginFrame();
@@ -46,11 +65,8 @@ public:
     void Shutdown();
     std::unordered_map<std::string,struct nk_font*> GetFonts();
 private:
-    AssetManager assets;
     NLGTConfig Config;
-    NKGLI glimpl;
-    NLLogger Logger;
-    GLFWwindow* window;
+    NLGTContext ctx;
 
     std::unordered_map<std::string,struct nk_font*> fonts;
 };
