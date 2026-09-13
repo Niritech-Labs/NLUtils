@@ -59,6 +59,8 @@ class NLGT {
 public:
     NLGTContext* Init(NLGTConfig config);
 
+    glm::vec2 GetCurrentWinSize();
+
     bool ShouldClose();
     void BeginFrame();
     void EndFrame();
