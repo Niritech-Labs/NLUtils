@@ -74,7 +74,23 @@ target_link_libraries(NLUtils-Extra PRIVATE
 
 add_library(NLUtils-NLGToolkit SHARED
     src/NLGToolkit/NKGLImplementation.cpp
-    src/NLGToolkit/NLGToolkit.cpp
+    src/NLGToolkit/Toolkit.cpp
+        
+    src/NLGToolkit/Widgets.cpp
+    src/NLGToolkit/Widgets/Button.cpp
+    src/NLGToolkit/Widgets/Checkbox.cpp
+    src/NLGToolkit/Widgets/Custom.cpp
+    src/NLGToolkit/Widgets/Entry.cpp
+    src/NLGToolkit/Widgets/Image.cpp 
+    src/NLGToolkit/Widgets/Label.cpp 
+    src/NLGToolkit/Widgets/Layout.cpp 
+    src/NLGToolkit/Widgets/Progress.cpp
+    src/NLGToolkit/Widgets/Property.cpp 
+    src/NLGToolkit/Widgets/Slider.cpp
+    src/NLGToolkit/Widgets/SubLayouts.cpp 
+    src/NLGToolkit/Widgets/Text.cpp 
+    src/NLGToolkit/Widgets/Value.cpp
+    src/NLGToolkit/Widgets/Window.cpp
 )
 
 set(GLFW_BUILD_WAYLAND ON CACHE INTERNAL "")
@@ -106,13 +122,15 @@ target_include_directories(NLUtils-NLGToolkit PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/NLUtils/glfw>
 ) 
 
-target_link_libraries(NLUtils-NLGToolkit PRIVATE
+target_link_libraries(NLUtils-NLGToolkit PUBLIC
     glm::glm
     NLUtils
     NLUtils-Extra
     Nuklear
-    glad
     glfw
+)
+target_link_libraries(NLUtils-NLGToolkit PRIVATE
+    glad
 )
 
 ###########################################################################################################

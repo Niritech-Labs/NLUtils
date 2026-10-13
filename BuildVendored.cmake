@@ -124,7 +124,23 @@ if(BUILD_NLUTILS_NLGTOOLKIT)
     if(BUILD_NLUTILS_NLGTOOLKIT)
     add_library(NLUtils-NLGToolkit
         src/NLGToolkit/NKGLImplementation.cpp
-        src/NLGToolkit/NLGToolkit.cpp
+        src/NLGToolkit/Toolkit.cpp
+        
+        src/NLGToolkit/Widgets.cpp
+        src/NLGToolkit/Widgets/Button.cpp
+        src/NLGToolkit/Widgets/Checkbox.cpp
+        src/NLGToolkit/Widgets/Custom.cpp
+        src/NLGToolkit/Widgets/Entry.cpp
+        src/NLGToolkit/Widgets/Image.cpp 
+        src/NLGToolkit/Widgets/Label.cpp 
+        src/NLGToolkit/Widgets/Layout.cpp 
+        src/NLGToolkit/Widgets/Progress.cpp
+        src/NLGToolkit/Widgets/Property.cpp 
+        src/NLGToolkit/Widgets/Slider.cpp
+        src/NLGToolkit/Widgets/SubLayouts.cpp 
+        src/NLGToolkit/Widgets/Text.cpp 
+        src/NLGToolkit/Widgets/Value.cpp
+        src/NLGToolkit/Widgets/Window.cpp
     )
 
     if(NLUTILS_GLM_INCLUDE_DIR STREQUAL "internal")

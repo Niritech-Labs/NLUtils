@@ -136,6 +136,12 @@ public:
         return elementCount; 
     }
 };
+
+enum State {
+    ENABLED,
+    DISABLED
+};
+
 }
 
 namespace std {
@@ -149,3 +155,4 @@ namespace std {
         }
     };
 }
+

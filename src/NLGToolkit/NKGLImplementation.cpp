@@ -1,4 +1,4 @@
-#include "../../include/NLUtils/NLGToolkit/NLGToolkit.hpp"
+#include "../../include/NLUtils/NLGToolkit/Toolkit.hpp"
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
