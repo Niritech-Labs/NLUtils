@@ -1,4 +1,5 @@
-<img width="1272" height="426" alt="изображение" src="https://github.com/user-attachments/assets/ea272cba-436b-49e9-a945-c37b22903887" />
+<img width="1296" height="406" alt="изображение" src="https://github.com/user-attachments/assets/823bad90-7d0a-42d3-9188-20d0f9664ae5" />
+
 
 # EN
 ### Niritech Labs Utils is a set of utilities for creating games and graphics applications.
