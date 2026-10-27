@@ -153,7 +153,7 @@ bool FormatParsers::JSONParser::Save(Blocks& data) {
     
 }
 Blocks FormatParsers::JSONParser::Load() {
-    nlohmann::json data = read();
+    nlohmann::json data = nlohmann::json::parse(read());
     Blocks root("JSON");
 
     if (data.is_discarded()) 

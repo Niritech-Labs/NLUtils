@@ -272,6 +272,7 @@ void parseBlock_blocks(std::vector<BlockLineMeta>& lines, size_t& i, uint32_t my
 
 Blocks Blocks::FromStr(std::string data, NLLogger* Logger) {
     Blocks result("");
+    if (data.empty()) return result;
     data = NLTextUtils::Replace(data, "\r\n", "\n");
 
     std::vector<BlockLineMeta> lines = analize_blocks(data,Logger);
@@ -297,8 +298,6 @@ Blocks Blocks::FromStr(std::string data, NLLogger* Logger) {
     result.Update();
     return result;
 }
-
-
 
 
 void Blocks::AddNewRootBlock(std::string name) {

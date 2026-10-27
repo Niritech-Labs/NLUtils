@@ -159,15 +159,15 @@ private:
 
 template <typename LO>
 void NLAtomic<LO>::W_SetLockState(bool lock) {
-    W_Lock.store(lock,std::memory_order_release);
+    W_Lock.store(lock,std::memory_order_seq_cst);
 }
 template <typename LO>
 bool NLAtomic<LO>::R_SetLockState(bool lock) {
     if (lock) {
         bool expected = false;
-        return R_Lock.compare_exchange_strong(expected, true, std::memory_order_acq_rel, std::memory_order_acquire);
+        return R_Lock.compare_exchange_strong(expected, true, std::memory_order_seq_cst, std::memory_order_seq_cst);
     }
-    R_Lock.store(false, std::memory_order_release);
+    R_Lock.store(false, std::memory_order_seq_cst);
     return true;
 }
 
@@ -196,36 +196,44 @@ bool NLAtomic<LO>::GetCurrentBackbuf() {
 
 template <typename LO>
 uint64_t NLAtomic<LO>::R_Order() {
-    while (R_Lock.load(std::memory_order_acquire)) {}
-    return R_OrderedTickets.fetch_add(1, std::memory_order_acquire);
+    for (;;) {
+        while (R_Lock.load(std::memory_order_acquire)) {}
+        uint64_t ot = R_OrderedTickets.fetch_add(1, std::memory_order_seq_cst);
+        if (!R_Lock.load(std::memory_order_seq_cst)) return ot;
+        R_Close();
+        while (R_Lock.load(std::memory_order_acquire)) {}
+    }
 }
 template <typename LO>
 uint64_t NLAtomic<LO>::R_GetOpenTickets() {
-    uint64_t ordered = R_OrderedTickets.load(std::memory_order_acquire);
-    uint64_t current = R_CurrentTicket.load(std::memory_order_acquire);
+    uint64_t ordered = R_OrderedTickets.load(std::memory_order_seq_cst);
+    uint64_t current = R_CurrentTicket.load(std::memory_order_seq_cst);
     return ordered - current;
 }
 template <typename LO>
 void NLAtomic<LO>::R_Close() {
-    R_CurrentTicket.fetch_add(1, std::memory_order_release);
+    R_CurrentTicket.fetch_add(1, std::memory_order_seq_cst);
 }
 
 template <typename LO>
 uint64_t NLAtomic<LO>::W_Order(bool wait) {
-    while (W_Lock.load(std::memory_order_acquire)) {}
-	if (wait) {
-		uint64_t ot = W_OrderedTickets.fetch_add(1, std::memory_order_acquire);
-		while (!W_GetState(ot)) {}
-		return ot;
-	}
-	else {
-	    return W_OrderedTickets.fetch_add(1, std::memory_order_acquire);
-	}
+    for (;;) {
+        while (W_Lock.load(std::memory_order_acquire)) {}
+        uint64_t ot = W_OrderedTickets.fetch_add(1, std::memory_order_seq_cst);
+        if (!W_Lock.load(std::memory_order_seq_cst)) {
+            if (wait) {
+                while (!W_GetState(ot)) {}
+            }
+            return ot;
+        }
+        W_Close();
+        while (W_Lock.load(std::memory_order_acquire)) {}
+    }
 }
 template <typename LO>
 uint64_t NLAtomic<LO>::W_GetOpenTickets() {
-    uint64_t ordered = W_OrderedTickets.load(std::memory_order_acquire);
-    uint64_t current = W_CurrentTicket.load(std::memory_order_acquire);
+    uint64_t ordered = W_OrderedTickets.load(std::memory_order_seq_cst);
+    uint64_t current = W_CurrentTicket.load(std::memory_order_seq_cst);
     return ordered - current;
 }
 template <typename LO>
@@ -234,7 +242,7 @@ bool NLAtomic<LO>::W_GetState(uint64_t ticket) {
 }
 template <typename LO>
 void NLAtomic<LO>::W_Close() {
-    W_CurrentTicket.fetch_add(1, std::memory_order_release);
+    W_CurrentTicket.fetch_add(1, std::memory_order_seq_cst);
     
 }
 
@@ -490,56 +498,60 @@ inline bool NLAtomic<NLOpaqueObject>::GetCurrentBackbuf() {
     return CurrentBackbuf.load(std::memory_order_acquire);
 }
 inline uint64_t NLAtomic<NLOpaqueObject>::R_Order() {
-    while (R_Lock.load(std::memory_order_acquire)) {}
-    return R_OrderedTickets.fetch_add(1, std::memory_order_acquire);
+    for (;;) {
+        while (R_Lock.load(std::memory_order_acquire)) {}
+        uint64_t ot = R_OrderedTickets.fetch_add(1, std::memory_order_seq_cst);
+        if (!R_Lock.load(std::memory_order_seq_cst)) return ot;
+        R_Close();
+        while (R_Lock.load(std::memory_order_acquire)) {}
+    }
 }
 inline uint64_t NLAtomic<NLOpaqueObject>::R_GetOpenTickets() {
-    uint64_t ordered = R_OrderedTickets.load(std::memory_order_acquire);
-    uint64_t current = R_CurrentTicket.load(std::memory_order_acquire);
+    uint64_t ordered = R_OrderedTickets.load(std::memory_order_seq_cst);
+    uint64_t current = R_CurrentTicket.load(std::memory_order_seq_cst);
     return ordered - current;
 }
 inline void NLAtomic<NLOpaqueObject>::R_Close() {
-    R_CurrentTicket.fetch_add(1, std::memory_order_release);
+    R_CurrentTicket.fetch_add(1, std::memory_order_seq_cst);
 }
 inline uint64_t NLAtomic<NLOpaqueObject>::W_Order(bool wait) {
-    while (W_Lock.load(std::memory_order_acquire)) {}
-	if (wait) {
-		uint64_t ot = W_OrderedTickets.fetch_add(1, std::memory_order_acquire);
-		while (!W_GetState(ot)) {}
-		return ot;
-	}
-	else {
-	    return W_OrderedTickets.fetch_add(1, std::memory_order_acquire);
-	}
+    for (;;) {
+        while (W_Lock.load(std::memory_order_acquire)) {}
+        uint64_t ot = W_OrderedTickets.fetch_add(1, std::memory_order_seq_cst);
+        if (!W_Lock.load(std::memory_order_seq_cst)) {
+            if (wait) {
+                while (!W_GetState(ot)) {}
+            }
+            return ot;
+        }
+        W_Close();
+        while (W_Lock.load(std::memory_order_acquire)) {}
+    }
 }
 inline uint64_t NLAtomic<NLOpaqueObject>::W_GetOpenTickets() {
-    uint64_t ordered = W_OrderedTickets.load(std::memory_order_acquire);
-    uint64_t current = W_CurrentTicket.load(std::memory_order_acquire);
+    uint64_t ordered = W_OrderedTickets.load(std::memory_order_seq_cst);
+    uint64_t current = W_CurrentTicket.load(std::memory_order_seq_cst);
     return ordered - current;
 }
 inline bool NLAtomic<NLOpaqueObject>::W_GetState(uint64_t ticket) {
     return ticket == W_CurrentTicket.load(std::memory_order_acquire);
 }
 inline void NLAtomic<NLOpaqueObject>::W_Close() {
-    W_CurrentTicket.fetch_add(1, std::memory_order_release);
+    W_CurrentTicket.fetch_add(1, std::memory_order_seq_cst);
     
 }
 inline void NLAtomic<NLOpaqueObject>::W_SetLockState(bool lock) {
-    W_Lock.store(lock,std::memory_order_release);
+    W_Lock.store(lock,std::memory_order_seq_cst);
 }
 inline bool NLAtomic<NLOpaqueObject>::R_SetLockState(bool lock) {
     if (lock) {
         bool expected = false;
-        return R_Lock.compare_exchange_strong(expected, true, std::memory_order_acq_rel, std::memory_order_acquire);
+        return R_Lock.compare_exchange_strong(expected, true, std::memory_order_seq_cst, std::memory_order_seq_cst);
     }
-    R_Lock.store(false, std::memory_order_release);
+    R_Lock.store(false, std::memory_order_seq_cst);
     return true;
 }
 
 
 
 #define NLAtomicOpaque NLAtomic<NLOpaqueObject>
-
-
-
-
