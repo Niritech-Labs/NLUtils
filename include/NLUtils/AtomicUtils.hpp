@@ -232,9 +232,6 @@ void NLAtomic<LO>::W_Close() {
 
 
 
-
-
-
 #define GetFieldCasted(Type,Search) getFieldCasted<Type>(Search,#Type)
 #define GetCasted(Type) getCasted<Type>(#Type)
 
@@ -317,7 +314,6 @@ public:
         }
     }
 };
-
 
 
 template <>

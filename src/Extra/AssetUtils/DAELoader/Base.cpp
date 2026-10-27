@@ -3,11 +3,10 @@
 
 void COLLADALoader::Setup(NLLogger* logger, bool production) {
     Logger = logger;
-    xmlm.Setup("", production);
 }
 
 Model COLLADALoader::LoadModel(const std::string path) {
-    pugi::xml_document doc = xmlm.OpenRestricted(path);
+    pugi::xml_document doc = xmlm.Read(path);
     Model model;
     if (doc.empty()) {
         Logger->Error("Failed to load COLLADA file: " + path, false, "ColladaLoader");

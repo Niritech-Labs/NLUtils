@@ -1,28 +1,45 @@
 
 add_library(NLUtils SHARED
     src/Logger.cpp
-    src/JSONUtils.cpp
-    src/XMLUtils.cpp
     src/Timer.cpp
-    src/DebugUtils.cpp
     src/TextUtils.cpp
 )
 
 
-add_subdirectory(libs/pugixml ${CMAKE_CURRENT_BINARY_DIR}/pugixml_build EXCLUDE_FROM_ALL)
+
 add_subdirectory(libs/replxx-0.0.4 ${CMAKE_CURRENT_BINARY_DIR}/replxx_build EXCLUDE_FROM_ALL)
 target_include_directories(NLUtils PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/pugixml/src>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/NLUtils/pugixml>
-
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/replxx-0.0.4/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/NLUtils/replxx>
 )
 
 target_link_libraries(NLUtils PUBLIC
-    pugixml
     replxx
 )
+
+###########################################################################################################
+
+add_library(NLUtils-EnderIO SHARED
+    src/EnderIO/Blocks.cpp
+    src/EnderIO/IO.cpp
+    src/EnderIO/Parsers.cpp
+
+)
+
+add_subdirectory(libs/pugixml ${CMAKE_CURRENT_BINARY_DIR}/pugixml_build EXCLUDE_FROM_ALL)
+
+target_include_directories(NLUtils-EnderIO PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/pugixml/src>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/NLUtils/pugixml>
+)
+
+target_link_libraries(NLUtils-EnderIO PUBLIC
+    glm::glm
+    NLUtils
+    pugixml
+)
+
+
 
 
 ###########################################################################################
@@ -66,6 +83,7 @@ target_include_directories(NLUtils-Extra PUBLIC
 target_link_libraries(NLUtils-Extra PRIVATE
     glm::glm
     NLUtils
+    NLUtils-EnderIO
     Nuklear
     glad
 )
@@ -74,7 +92,27 @@ target_link_libraries(NLUtils-Extra PRIVATE
 
 add_library(NLUtils-NLGToolkit SHARED
     src/NLGToolkit/NKGLImplementation.cpp
-    src/NLGToolkit/NLGToolkit.cpp
+    src/NLGToolkit/Toolkit.cpp
+        
+    src/NLGToolkit/Widgets.cpp
+    src/NLGToolkit/Widgets/Button.cpp
+    src/NLGToolkit/Widgets/Checkbox.cpp
+    src/NLGToolkit/Widgets/Custom.cpp
+    src/NLGToolkit/Widgets/Entry.cpp
+    src/NLGToolkit/Widgets/Image.cpp 
+    src/NLGToolkit/Widgets/Label.cpp 
+    src/NLGToolkit/Widgets/Layout.cpp 
+    src/NLGToolkit/Widgets/Progress.cpp
+    src/NLGToolkit/Widgets/Property.cpp 
+    src/NLGToolkit/Widgets/Slider.cpp
+    src/NLGToolkit/Widgets/SubLayouts.cpp 
+    src/NLGToolkit/Widgets/Text.cpp 
+    src/NLGToolkit/Widgets/Value.cpp
+    src/NLGToolkit/Widgets/Window.cpp
+    src/NLGToolkit/Widgets/Knob.cpp
+    src/NLGToolkit/Widgets/Combobox.cpp
+    src/NLGToolkit/Widgets/ColorPicker.cpp
+    src/NLGToolkit/StyleManager.cpp
 )
 
 set(GLFW_BUILD_WAYLAND ON CACHE INTERNAL "")
@@ -106,13 +144,15 @@ target_include_directories(NLUtils-NLGToolkit PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/NLUtils/glfw>
 ) 
 
-target_link_libraries(NLUtils-NLGToolkit PRIVATE
+target_link_libraries(NLUtils-NLGToolkit PUBLIC
     glm::glm
     NLUtils
     NLUtils-Extra
     Nuklear
-    glad
     glfw
+)
+target_link_libraries(NLUtils-NLGToolkit PRIVATE
+    glad
 )
 
 ###########################################################################################################

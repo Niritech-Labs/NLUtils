@@ -1,0 +1,919 @@
+
+
+// все существующие типы и то как из назначать
+type color <-- rgba(255, 255, 255, 255); or rgb(255, 255, 255); or hsv(255,255,255) or hex(FFFFFF);
+type vec2 <-- vec2(x,y);
+type float <-- float(x);
+type image <-- image("./relative/or/absolute/path/to/image.png or image.svg or image.webp"); or image9s("./relative/or/absolute/path/to/image.png or image.svg or image.webp", left, top, right, bottom);
+type align <-- align(TOP_LEFT or TOP_CENTER or TOP_RIGHT or MIDDLE_LEFT or MIDDLE_CENTER or MIDDLE_RIGHT or BOTTOM_LEFT or BOTTOM_CENTER or BOTTOM_RIGHT);
+type symbol <-- symbol(NONE or X or UNDERSCORE or CIRCLE_SOLID or CIRCLE_OUTLINE or RECT_SOLID or RECT_OUTLINE or TRIANGLE_UP or TRIANGLE_DOWN or TRIANGLE_LEFT or TRIANGLE_RIGHT or PLUS or MINUS or TRIANGLE_UP_OUTLINE or TRIANGLE_DOWN_OUTLINE or TRIANGLE_LEFT_OUTLINE or TRIANGLE_RIGHT_OUTLINE or MAX);
+type item <-- color; or image/image9s;
+type bool <-- bool(true or false);
+type tooltipPos <-- tooltipPos(TOP_LEFT or TOP_CENTER or TOP_RIGHT or MIDDLE_LEFT or MIDDLE_CENTER or MIDDLE_RIGHT or BOTTOM_LEFT or BOTTOM_CENTER or BOTTOM_RIGHT);
+type string <-- string("text")
+type int <-- int(x)
+
+
+//макро
+#defval name <- typevalue;
+
+//все поля и их типы
+theme-variation: Sheet {
+    Window -> {
+        Header -> {
+            # background
+            item normal
+            item hover
+            item active
+
+            # buttons
+            button close -> {
+                item hover;
+                item active;
+                item normal;
+                color border-color;
+                float bg-color-factor;
+
+                color text-background;
+                color text-normal;
+                color text-hover;
+                color text-active;
+                align text-alignment;
+                float text-color-factor;
+
+                float border;
+                float rounding;
+                vec2 padding;
+                vec2 image-padding;
+                vec2 touch-padding;
+                float disabled-factor;
+            };
+            symbol close-symbol;
+
+            button minimize -> {
+                item hover;
+                item active;
+                item normal;
+                color border-color;
+                float bg-color-factor;
+
+                color text-background;
+                color text-normal;
+                color text-hover;
+                color text-active;
+                align text-alignment;
+                float text-color-factor;
+
+                float border;
+                float rounding;
+                vec2 padding;
+                vec2 image-padding;
+                vec2 touch-padding;
+                float disabled-factor;
+            };
+            symbol minimize-symbol;
+            symbol maximize-symbol;
+
+            # label
+            color label-normal;
+            color label-hover;
+            color label-active;
+
+            # properties
+            bool header-align;
+            vec2 padding;
+            vec2 label-padding;
+            vec2 spacing;
+        };
+
+        item background-fixed;
+        color background;
+        color border-color;
+        color popup-border-color;
+        color combo-border-color;
+        color contextual-border-color;
+        color menu-border-color;
+        color group-border-color;
+        color tooltip-border-color;
+        item scaler;
+
+        float border;
+        float combo-border;
+        float contextual-border;
+        float menu-border;
+        float group-border;
+        float tooltip-border;
+        float popup-border;
+        float min-row-height-padding;
+
+        float rounding;
+        vec2 spacing;
+        vec2 scrollbar_size;
+        vec2 min_size;
+
+        vec2 padding;
+        vec2 group_padding;
+        vec2 popup_padding;
+        vec2 combo_padding;
+        vec2 contextual_padding;
+        vec2 menu_padding;
+        vec2 tooltip_padding;
+
+        tooltipPos tooltip-origin;
+        vec2 tooltip-offset;
+    };
+    Text -> {
+        color color;
+        vec2 padding;
+        float color-factor;
+        float disabled-factor;
+    };
+    Button -> {
+        item hover;
+        item active;
+        item normal;
+        color border-color;
+        float bg-color-factor;
+
+        color text-background;
+        color text-normal;
+        color text-hover;
+        color text-active;
+        align text-alignment;
+        float text-color-factor;
+
+        float border;
+        float rounding;
+        vec2 padding;
+        vec2 image-padding;
+        vec2 touch-padding;
+        float disabled-factor;
+    };
+    Contextual-Button -> {
+        item hover;
+        item active;
+        item normal;
+        color border-color;
+        float bg-color-factor;
+
+        color text-background;
+        color text-normal;
+        color text-hover;
+        color text-active;
+        align text-alignment;
+        float text-color-factor;
+
+        float border;
+        float rounding;
+        vec2 padding;
+        vec2 image-padding;
+        vec2 touch-padding;
+        float disabled-factor;
+    };
+    Menu-Button -> {
+        item hover;
+        item active;
+        item normal;
+        color border-color;
+        float bg-color-factor;
+
+        color text-background;
+        color text-normal;
+        color text-hover;
+        color text-active;
+        align text-alignment;
+        float text-color-factor;
+
+        float border;
+        float rounding;
+        vec2 padding;
+        vec2 image-padding;
+        vec2 touch-padding;
+        float disabled-factor;
+    };
+    Radio-Button -> {
+        item hover;
+        item active;
+        item normal;
+        color border-color;
+
+        item cursor-normal;
+        item cursor-hover;
+
+        color text-background;
+        color text-normal;
+        color text-hover;
+        color text-active;
+        align text-alignment;
+
+        vec2 padding;
+        vec2 touch-padding;
+
+        float spacing;
+        float border;
+        float color-factor;
+        float disabled-factor;
+    };
+    Checkbox -> {
+        item hover;
+        item active;
+        item normal;
+        color border-color;
+
+        item cursor-normal;
+        item cursor-hover;
+
+        color text-background;
+        color text-normal;
+        color text-hover;
+        color text-active;
+        align text-alignment;
+
+        vec2 padding;
+        vec2 touch-padding;
+
+        float spacing;
+        float border;
+        float color-factor;
+        float disabled-factor;
+    };
+    Selectable -> {
+        item hover;
+        item pressed;
+        item normal;
+
+        item active-hover;
+        item active-pressed;
+        item active-normal;
+
+        color text-hover;
+        color text-pressed;
+        color text-normal;
+
+        color active-text-hover;
+        color active-text-pressed;
+        color active-text-normal;
+        color bg-text;
+        align text-alignment;
+
+        float rounding;
+        vec2 padding;
+        vec2 touch-padding;
+        vec2 image-padding;
+        float color-factor;
+        float disabled-factor;
+    };
+    Slider -> {
+        item hover;
+        item active;
+        item normal;
+        color border-color;
+
+        color bar-normal;
+        color bar-hover;
+        color bar-active;
+        color bar-filled;
+
+        item cursor-normal;
+        item cursor-hover;
+        item cursor-active;
+
+        float border;
+        float rounding;
+        float bar-height;
+        vec2 padding;
+        vec2 spacing;
+        vec2 cursor-size;
+        float color-factor;
+        float disabled-factor;
+        int show-buttons;
+
+        button inc-button -> {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+        button dec-button -> {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+        symbol inc-symbol;
+        symbol dec-symbol;
+    };
+    Progress -> {
+        item hover;
+        item active;
+        item normal;
+        color border-color;
+        
+        item cursor-hover;
+        item cursor-active;
+        item cursor-normal;
+        color cursor-border-color;
+
+        float rounding;
+        float border;
+        float cursor-border;
+        float cursor-rounding;
+        vec2 padding;
+        float color-factor;
+        float disabled-factor;
+    };
+    Property -> {
+        item hover;
+        item active;
+        item normal;
+        color border-color;
+
+        color label-normal;
+        color label-hover;
+        color label-active;
+
+        symbol sym-left;
+        symbol sym-right;
+
+        float border;
+        float rounding;
+        vec2 padding;
+        float color-factor;
+        float disabled-factor;
+
+        edit edit-entry -> {
+            item normal;
+            item hover;
+            item active;
+            color border-color;
+            scrollbar scrollbar -> {
+                item normal;
+                item hover;
+                item active;
+                color border-color;
+
+                item cursor-normal;
+                item cursor-hover;
+                item cursor-active;
+                color cursor-border-color;
+
+                float border;
+                float rounding;
+                float border-cursor;
+                float rounding-cursor;
+                vec2 padding;
+                float color-factor;
+                float disabled-factor;
+
+                int show-buttons;
+                button inc-button -> {
+                    item hover;
+                    item active;
+                    item normal;
+                    color border-color;
+                    float bg-color-factor;
+
+                    color text-background;
+                    color text-normal;
+                    color text-hover;
+                    color text-active;
+                    align text-alignment;
+                    float text-color-factor;
+
+                    float border;
+                    float rounding;
+                    vec2 padding;
+                    vec2 image-padding;
+                    vec2 touch-padding;
+                    float disabled-factor;
+                };
+                button dec-button -> {
+                    item hover;
+                    item active;
+                    item normal;
+                    color border-color;
+                    float bg-color-factor;
+
+                    color text-background;
+                    color text-normal;
+                    color text-hover;
+                    color text-active;
+                    align text-alignment;
+                    float text-color-factor;
+
+                    float border;
+                    float rounding;
+                    vec2 padding;
+                    vec2 image-padding;
+                    vec2 touch-padding;
+                    float disabled-factor;
+                };
+                symbol inc-symbol;
+                symbol dec-symbol;
+            };
+
+            color cursor-normal;
+            color cursor-hover;
+            color cursor-text-normal;
+            color cursor-text-hover;
+
+            color text-normal;
+            color text-hover;
+            color text-active;
+
+            color selected-normal;
+            color selected-hover;
+            color selected-text-normal;
+            color selected-text-hover;
+
+            float border;
+            float rounding;
+            float cursor-size;
+            vec2 scrollbar-size;
+            vec2 padding;
+            float row-padding;
+            float color-factor;
+            float disabled-factor;
+        }
+        button inc-button -> {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+        button dec-button -> {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+    };
+    Edit -> {
+        item normal;
+        item hover;
+        item active;
+        color border-color;
+        scrollbar scrollbar -> {
+            item normal;
+            item hover;
+            item active;
+            color border-color;
+
+            item cursor-normal;
+            item cursor-hover;
+            item cursor-active;
+            color cursor-border-color;
+
+            float border;
+            float rounding;
+            float border-cursor;
+            float rounding-cursor;
+            vec2 padding;
+            float color-factor;
+            float disabled-factor;
+
+            int show-buttons;
+            button inc-button -> {
+                item hover;
+                item active;
+                item normal;
+                color border-color;
+                float bg-color-factor;
+
+                color text-background;
+                color text-normal;
+                color text-hover;
+                color text-active;
+                align text-alignment;
+                float text-color-factor;
+
+                float border;
+                float rounding;
+                vec2 padding;
+                vec2 image-padding;
+                vec2 touch-padding;
+                float disabled-factor;
+            };
+            button dec-button -> {
+                item hover;
+                item active;
+                item normal;
+                color border-color;
+                float bg-color-factor;
+
+                color text-background;
+                color text-normal;
+                color text-hover;
+                color text-active;
+                align text-alignment;
+                float text-color-factor;
+
+                float border;
+                float rounding;
+                vec2 padding;
+                vec2 image-padding;
+                vec2 touch-padding;
+                float disabled-factor;
+            };
+            symbol inc-symbol;
+            symbol dec-symbol;
+        };
+
+        color cursor-normal;
+        color cursor-hover;
+        color cursor-text-normal;
+        color cursor-text-hover;
+
+        color text-normal;
+        color text-hover;
+        color text-active;
+
+        color selected-normal;
+        color selected-hover;
+        color selected-text-normal;
+        color selected-text-hover;
+
+        float border;
+        float rounding;
+        float cursor-size;
+        vec2 scrollbar-size;
+        vec2 padding;
+        float row-padding;
+        float color-factor;
+        float disabled-factor;
+    };
+    Chart -> {
+        item background;
+        color border-color;
+        color selected-color;
+        color color;
+
+        float border;
+        float rounding;
+        vec2 padding;
+        float color-factor;
+        float disabled-factor;
+        bool show-markers;
+    };
+    Scrollbar-Vertical -> {
+        item normal;
+        item hover;
+        item active;
+        color border-color;
+
+        item cursor-normal;
+        item cursor-hover;
+        item cursor-active;
+        color cursor-border-color;
+
+        float border;
+        float rounding;
+        float border-cursor;
+        float rounding-cursor;
+        vec2 padding;
+        float color-factor;
+        float disabled-factor;
+
+        int show-buttons;
+        button inc-button = {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+        button dec-button = {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+        symbol inc-symbol;
+        symbol dec-symbol;
+    };
+    Scrollbar-Horizontal -> {
+        item normal;
+        item hover;
+        item active;
+        color border-color;
+
+        item cursor-normal;
+        item cursor-hover;
+        item cursor-active;
+        color cursor-border-color;
+
+        float border;
+        float rounding;
+        float border-cursor;
+        float rounding-cursor;
+        vec2 padding;
+        float color-factor;
+        float disabled-factor;
+
+        int show-buttons;
+        button inc-button -> {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+        button dec-button -> {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+        symbol inc-symbol;
+        symbol dec-symbol;
+    };
+    Tree -> {
+        item background;
+        color border-color;
+        color text;
+
+        button tab-maximize-button -> {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+        button tab-minimize-button -> {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+        button node-maximize-button -> {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+        button node-minimize-button -> {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+        symbol sym-minimize;
+        symbol sym-maximize;
+
+        float border;
+        float rounding;
+        float indent;
+        vec2 padding;
+        vec2 spacing;
+        float color-factor;
+        float disabled-factor;
+    };
+    Combobox -> {
+        item normal;
+        item hover;
+        item active;
+        color border-color;
+
+        color label-normal;
+        color label-hover;
+        color label-active;
+
+        color symbol-normal;
+        color symbol-hover;
+        color symbol-active;
+
+
+        button button -> {
+            item hover;
+            item active;
+            item normal;
+            color border-color;
+            float bg-color-factor;
+
+            color text-background;
+            color text-normal;
+            color text-hover;
+            color text-active;
+            align text-alignment;
+            float text-color-factor;
+
+            float border;
+            float rounding;
+            vec2 padding;
+            vec2 image-padding;
+            vec2 touch-padding;
+            float disabled-factor;
+        };
+        symbol sym-normal;
+        symbol sym-hover;
+        symbol sym-active;
+
+        float border;
+        float rounding;
+        vec2 content-padding;
+        vec2 button-padding;
+        vec2 spacing;
+        float color-factor;
+        float disabled-factor;
+    };
+    Knob -> {
+        item normal;
+        item hover;
+        item active;
+        color border-color;
+
+        color knob-normal;
+        color knob-hover;
+        color knob-active;
+        color knob-border-color;
+
+        color cursor-normal;
+        color cursor-hover;
+        color cursor-active;
+
+        float border;
+        float knob-border;
+        vec2 padding;
+        vec2 spacing;
+        float cursor-width;
+        float color-factor;
+        float disabled-factor;
+    };
+}

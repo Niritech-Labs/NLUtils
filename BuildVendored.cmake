@@ -23,23 +23,9 @@ endif()
 
 add_library(NLUtils 
     src/Logger.cpp
-    src/JSONUtils.cpp
-    src/XMLUtils.cpp
     src/Timer.cpp
-    src/DebugUtils.cpp
     src/TextUtils.cpp
 )
-
-if(NLUTILS_PUGIXML_INCLUDE_DIR STREQUAL "internal")
-    add_subdirectory(libs/pugixml ${CMAKE_CURRENT_BINARY_DIR}/pugixml_build)
-    target_include_directories(NLUtils PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/libs/pugixml/src
-    )
-else()
-    target_include_directories(NLUtils PUBLIC
-        ${NLUTILS_PUGIXML_INCLUDE_DIR}
-    )
-endif()
 
 if(NLUTILS_REPLXX_INCLUDE_DIR STREQUAL "internal")
     add_subdirectory(libs/replxx-0.0.4 ${CMAKE_CURRENT_BINARY_DIR}/replxx_build)
@@ -55,12 +41,37 @@ endif()
 
 
 target_link_libraries(NLUtils PUBLIC
-    pugixml
     replxx
 )
 
+if(BUILD_NLUTILS_ENDER_IO)
+add_library(NLUtils-EnderIO
+    src/EnderIO/Blocks.cpp
+    src/EnderIO/IO.cpp
+    src/EnderIO/Parsers.cpp
+)
+
+if(NLUTILS_PUGIXML_INCLUDE_DIR STREQUAL "internal")
+    add_subdirectory(libs/pugixml ${CMAKE_CURRENT_BINARY_DIR}/pugixml_build)
+    target_include_directories(NLUtils-EnderIO PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/pugixml/src
+    )
+else()
+    target_include_directories(NLUtils-EnderIO PUBLIC
+        ${NLUTILS_PUGIXML_INCLUDE_DIR}
+    )
+endif()
+
+
+target_link_libraries(NLUtils-EnderIO PUBLIC
+    glm::glm
+    pugixml
+    NLUtils
+)
+endif()
 
 if(BUILD_NLUTILS_EXTRA)
+if(BUILD_NLUTILS_ENDER_IO)
     add_library(NLUtils-Extra
         src/Extra/AssetUtils/DAELoader/Animations.cpp
         src/Extra/AssetUtils/DAELoader/Geometry.cpp
@@ -115,16 +126,41 @@ if(BUILD_NLUTILS_EXTRA)
         glm::glm
         NLUtils
         Nuklear
+        NLUtils-EnderIO
         glad
     )
+else()
+    message(FATAL_ERROR "Invalid configuration") 
 endif()
 
+endif()
 
 if(BUILD_NLUTILS_NLGTOOLKIT)
-    if(BUILD_NLUTILS_NLGTOOLKIT)
+    if(BUILD_NLUTILS_EXTRA)
+    if(BUILD_NLUTILS_ENDER_IO)
     add_library(NLUtils-NLGToolkit
         src/NLGToolkit/NKGLImplementation.cpp
-        src/NLGToolkit/NLGToolkit.cpp
+        src/NLGToolkit/Toolkit.cpp
+        src/NLGToolkit/StyleManager.cpp
+
+        src/NLGToolkit/Widgets.cpp
+        src/NLGToolkit/Widgets/Button.cpp
+        src/NLGToolkit/Widgets/Checkbox.cpp
+        src/NLGToolkit/Widgets/Custom.cpp
+        src/NLGToolkit/Widgets/Entry.cpp
+        src/NLGToolkit/Widgets/Image.cpp 
+        src/NLGToolkit/Widgets/Label.cpp 
+        src/NLGToolkit/Widgets/Layout.cpp 
+        src/NLGToolkit/Widgets/Progress.cpp
+        src/NLGToolkit/Widgets/Property.cpp 
+        src/NLGToolkit/Widgets/Slider.cpp
+        src/NLGToolkit/Widgets/SubLayouts.cpp 
+        src/NLGToolkit/Widgets/Text.cpp 
+        src/NLGToolkit/Widgets/Value.cpp
+        src/NLGToolkit/Widgets/Window.cpp
+        src/NLGToolkit/Widgets/Knob.cpp
+        src/NLGToolkit/Widgets/Combobox.cpp
+        src/NLGToolkit/Widgets/ColorPicker.cpp
     )
 
     if(NLUTILS_GLM_INCLUDE_DIR STREQUAL "internal")
@@ -173,11 +209,15 @@ if(BUILD_NLUTILS_NLGTOOLKIT)
         glm::glm
         NLUtils
         NLUtils-Extra
+        NLUtils-EnderIO
         Nuklear
         glad
         glfw
     )
     else()
     message(FATAL_ERROR "Invalid configuration") 
+    endif()
+    else()
+    message(FATAL_ERROR "Invalid configuration")
     endif()
 endif()

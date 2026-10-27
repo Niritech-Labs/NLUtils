@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.30)
-project(NLUtils VERSION 1.3.0 LANGUAGES CXX C)
+project(NLUtils VERSION 1.5.0 LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -19,7 +19,8 @@ else()
 endif()
 
 option(BUILD_NLUTILS_EXTRA "Build NLUtils Extra lib" ON)
-option(BUILD_NLUTILS_NLGTOOLKIT "Build NLUtils NL Graphics Toolkit lib (requires Extra)" ON)
+option(BUILD_NLUTILS_NLGTOOLKIT "Build NLUtils NL Graphics Toolkit lib (requires Extra, IO)" ON)
+option(BUILD_NLUTILS_ENDER_IO "Build NLUtils NL IO Utils" ON)
 
 option(BUILD_NLUTILS_VENDORED_MODE "Build NLUtils in vendored mode" OFF)
 

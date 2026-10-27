@@ -1,0 +1,1824 @@
+theme-info {
+    Autor = string("Lakur Fessi Nel/Артур Куфтерин/Niritech Labs");
+    Name = string("Base-Blue Theme");
+    Description = string("Blue base theme for NGTS");
+    License = string("BSD2-Simplifyed");
+}
+
+
+// ---- Light palette ----
+#defval L_ACCBAS    <- rgba(52, 120, 220, 255)
+#defval L_ACCHOV    <- rgba(70, 140, 240, 255)
+#defval L_ACCACT    <- rgba(40, 100, 200, 255)
+#defval L_ACCPRS    <- rgba(30, 85, 180, 255)
+
+#defval L_BGMAIN    <- rgba(245, 248, 252, 255)
+#defval L_BGPANEL   <- rgba(255, 255, 255, 255)
+#defval L_BGSUNK    <- rgba(235, 240, 248, 255)
+#defval L_BGHOV     <- rgba(230, 236, 245, 255)
+#defval L_BGACT     <- rgba(215, 225, 240, 255)
+#defval L_BGDANGER  <- rgba(232, 80, 80, 255)
+#defval L_BGDANGACT <- rgba(200, 55, 55, 255)
+
+#defval L_BRDBAS    <- rgba(200, 210, 225, 255)
+#defval L_BRDSTR    <- rgba(170, 185, 205, 255)
+
+#defval L_TXTBAS    <- rgba(30, 40, 60, 255)
+#defval L_TXTMUT    <- rgba(120, 130, 150, 255)
+#defval L_TXTACC    <- rgba(255, 255, 255, 255)
+
+#defval L_RADSM     <- float(3)
+#defval L_RADMD     <- float(4)
+#defval L_RADLG     <- float(6)
+
+#defval L_PADSM     <- vec2(4, 4)
+#defval L_PADMD     <- vec2(8, 6)
+#defval L_PADLG     <- vec2(12, 8)
+#defval L_PADZR     <- vec2(0, 0)
+
+#defval L_DISFAC    <- float(0.45)
+
+
+// ---- Dark palette ----
+#defval D_ACCBAS    <- rgba(74, 144, 242, 255)
+#defval D_ACCHOV    <- rgba(96, 164, 255, 255)
+#defval D_ACCACT    <- rgba(56, 118, 210, 255)
+#defval D_ACCPRS    <- rgba(46, 100, 190, 255)
+
+#defval D_BGMAIN    <- rgba(24, 28, 36, 255)
+#defval D_BGPANEL   <- rgba(34, 40, 52, 255)
+#defval D_BGSUNK    <- rgba(18, 22, 30, 255)
+#defval D_BGHOV     <- rgba(48, 56, 72, 255)
+#defval D_BGACT     <- rgba(62, 72, 92, 255)
+#defval D_BGDANGER  <- rgba(200, 70, 70, 255)
+#defval D_BGDANGACT <- rgba(170, 48, 48, 255)
+
+#defval D_BRDBAS    <- rgba(60, 70, 90, 255)
+#defval D_BRDSTR    <- rgba(86, 100, 124, 255)
+
+#defval D_TXTBAS    <- rgba(222, 228, 238, 255)
+#defval D_TXTMUT    <- rgba(150, 160, 178, 255)
+#defval D_TXTACC    <- rgba(255, 255, 255, 255)
+
+#defval D_RADSM     <- float(3)
+#defval D_RADMD     <- float(4)
+#defval D_RADLG     <- float(6)
+
+#defval D_PADSM     <- vec2(4, 4)
+#defval D_PADMD     <- vec2(8, 6)
+#defval D_PADLG     <- vec2(12, 8)
+#defval D_PADZR     <- vec2(0, 0)
+
+#defval D_DISFAC    <- float(0.45)
+
+
+theme-variation: Light {
+    Window -> {
+        Header -> {
+            normal = L_BGPANEL;
+            hover  = L_BGHOV;
+            active = L_BGACT;
+
+            close -> {
+                normal          = L_BGPANEL;
+                hover           = L_BGDANGER;
+                active          = L_BGDANGACT;
+                border-color    = L_BRDBAS;
+                bg-color-factor = float(1);
+
+                text-background   = L_TXTACC;
+                text-normal       = L_TXTMUT;
+                text-hover        = L_TXTACC;
+                text-active       = L_TXTACC;
+                text-alignment    = align(CENTERED);
+                text-color-factor = float(1);
+
+                border          = float(0);
+                rounding        = L_RADSM;
+                padding         = L_PADSM;
+                image-padding   = L_PADSM;
+                touch-padding   = L_PADSM;
+                disabled-factor = L_DISFAC;
+            }
+            close-symbol = symbol(X);
+
+            minimize -> {
+                normal          = L_BGPANEL;
+                hover           = L_BGHOV;
+                active          = L_BGACT;
+                border-color    = L_BRDBAS;
+                bg-color-factor = float(1);
+
+                text-background   = L_BGPANEL;
+                text-normal       = L_TXTMUT;
+                text-hover        = L_TXTBAS;
+                text-active       = L_TXTBAS;
+                text-alignment    = align(CENTERED);
+                text-color-factor = float(1);
+
+                border          = float(0);
+                rounding        = L_RADSM;
+                padding         = L_PADSM;
+                image-padding   = L_PADSM;
+                touch-padding   = L_PADSM;
+                disabled-factor = L_DISFAC;
+            }
+            minimize-symbol = symbol(MINUS);
+            maximize-symbol = symbol(MAX);
+
+            label-normal = L_TXTBAS;
+            label-hover  = L_TXTBAS;
+            label-active = L_ACCBAS;
+
+            header-align  = bool(true);
+            padding       = vec2(6, 4);
+            label-padding = vec2(8, 0);
+            spacing       = vec2(6, 0);
+        }
+
+        background-fixed        = L_BGPANEL;
+        background              = L_BGMAIN;
+        border-color            = L_BRDBAS;
+        popup-border-color      = L_BRDSTR;
+        combo-border-color      = L_BRDBAS;
+        contextual-border-color = L_BRDBAS;
+        menu-border-color       = L_BRDBAS;
+        group-border-color      = L_BRDBAS;
+        tooltip-border-color    = L_BRDBAS;
+        scaler                  = L_BGPANEL;
+
+        border                 = float(1);
+        combo-border           = float(1);
+        contextual-border      = float(1);
+        menu-border            = float(1);
+        group-border           = float(1);
+        tooltip-border         = float(1);
+        popup-border           = float(1);
+        min-row-height-padding = float(4);
+
+        rounding       = L_RADMD;
+        spacing        = vec2(6, 6);
+        scrollbar_size = vec2(14, 14);
+        min_size       = vec2(320, 240);
+
+        padding            = L_PADMD;
+        group_padding      = L_PADMD;
+        popup_padding      = L_PADMD;
+        combo_padding      = L_PADMD;
+        contextual_padding = L_PADMD;
+        menu_padding       = L_PADMD;
+        tooltip_padding    = L_PADSM;
+
+        tooltip-origin = tooltipPos(BOTTOM_CENTER);
+        tooltip-offset = vec2(0, 4);
+    }
+
+    Text -> {
+        color           = L_TXTBAS;
+        padding         = L_PADZR;
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+    }
+
+    Button -> {
+        normal          = L_BGPANEL;
+        hover           = L_BGHOV;
+        active          = L_ACCBAS;
+        border-color    = L_BRDBAS;
+        bg-color-factor = float(1);
+
+        text-background   = L_BGPANEL;
+        text-normal       = L_TXTBAS;
+        text-hover        = L_TXTBAS;
+        text-active       = L_TXTACC;
+        text-alignment    = align(CENTERED);
+        text-color-factor = float(1);
+
+        border          = float(1);
+        rounding        = L_RADMD;
+        padding         = L_PADMD;
+        image-padding   = L_PADSM;
+        touch-padding   = L_PADSM;
+        disabled-factor = L_DISFAC;
+    }
+
+    Contextual-Button -> {
+        normal          = L_BGPANEL;
+        hover           = L_BGHOV;
+        active          = L_BGACT;
+        border-color    = L_BRDBAS;
+        bg-color-factor = float(1);
+
+        text-background   = L_BGPANEL;
+        text-normal       = L_TXTBAS;
+        text-hover        = L_TXTBAS;
+        text-active       = L_ACCBAS;
+        text-alignment    = align(LEFT);
+        text-color-factor = float(1);
+
+        border          = float(1);
+        rounding        = L_RADMD;
+        padding         = L_PADMD;
+        image-padding   = L_PADSM;
+        touch-padding   = L_PADSM;
+        disabled-factor = L_DISFAC;
+    }
+
+    Menu-Button -> {
+        normal          = L_BGPANEL;
+        hover           = L_BGHOV;
+        active          = L_BGACT;
+        border-color    = L_BRDBAS;
+        bg-color-factor = float(1);
+
+        text-background   = L_BGPANEL;
+        text-normal       = L_TXTBAS;
+        text-hover        = L_TXTBAS;
+        text-active       = L_ACCBAS;
+        text-alignment    = align(LEFT);
+        text-color-factor = float(1);
+
+        border          = float(1);
+        rounding        = L_RADSM;
+        padding         = L_PADMD;
+        image-padding   = L_PADSM;
+        touch-padding   = L_PADSM;
+        disabled-factor = L_DISFAC;
+    }
+
+    Radio-Button -> {
+        normal        = L_BGPANEL;
+        hover         = L_BGHOV;
+        active        = L_BGACT;
+        border-color  = L_BRDBAS;
+
+        cursor-normal = L_BGPANEL;
+        cursor-hover  = L_ACCBAS;
+
+        text-background = L_BGPANEL;
+        text-normal     = L_TXTBAS;
+        text-hover      = L_TXTBAS;
+        text-active     = L_TXTBAS;
+        text-alignment  = align(LEFT);
+
+        padding       = L_PADMD;
+        touch-padding = L_PADSM;
+
+        spacing         = float(6);
+        border          = float(1);
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+    }
+
+    Checkbox -> {
+        normal        = L_BGPANEL;
+        hover         = L_BGHOV;
+        active        = L_ACCBAS;
+        border-color  = L_BRDBAS;
+
+        cursor-normal = L_BGPANEL;
+        cursor-hover  = L_ACCHOV;
+
+        text-background = L_BGPANEL;
+        text-normal     = L_TXTBAS;
+        text-hover      = L_TXTBAS;
+        text-active     = L_TXTACC;
+        text-alignment  = align(LEFT);
+
+        padding       = L_PADMD;
+        touch-padding = L_PADSM;
+
+        spacing         = float(6);
+        border          = float(1);
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+    }
+
+    Selectable -> {
+        normal  = L_BGPANEL;
+        pressed = L_BGACT;
+        hover   = L_BGHOV;
+
+        active-normal  = L_ACCBAS;
+        active-pressed = L_ACCPRS;
+        active-hover   = L_ACCHOV;
+
+        text-normal  = L_TXTBAS;
+        text-pressed = L_TXTBAS;
+        text-hover   = L_TXTBAS;
+
+        active-text-normal  = L_TXTACC;
+        active-text-pressed = L_TXTACC;
+        active-text-hover   = L_TXTACC;
+        bg-text             = L_BGPANEL;
+        text-alignment      = align(LEFT);
+
+        rounding        = L_RADSM;
+        padding         = L_PADMD;
+        touch-padding   = L_PADSM;
+        image-padding   = L_PADSM;
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+    }
+
+    Slider -> {
+        normal       = L_BGSUNK;
+        hover        = L_BGHOV;
+        active       = L_BGACT;
+        border-color = L_BRDBAS;
+
+        bar-normal = L_ACCBAS;
+        bar-hover  = L_ACCHOV;
+        bar-active = L_ACCACT;
+        bar-filled = L_ACCBAS;
+
+        cursor-normal = L_BGPANEL;
+        cursor-hover  = L_ACCHOV;
+        cursor-active = L_ACCBAS;
+
+        border          = float(1);
+        rounding        = L_RADSM;
+        bar-height      = float(4);
+        padding         = L_PADSM;
+        spacing         = L_PADSM;
+        cursor-size     = vec2(14, 14);
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+        show-buttons    = int(0);
+
+        inc-button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+        dec-button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+        inc-symbol = symbol(PLUS);
+        dec-symbol = symbol(MINUS);
+    }
+
+    Progress -> {
+        normal       = L_BGSUNK;
+        hover        = L_BGHOV;
+        active       = L_BGACT;
+        border-color = L_BRDBAS;
+
+        cursor-normal       = L_ACCBAS;
+        cursor-hover        = L_ACCHOV;
+        cursor-active       = L_ACCACT;
+        cursor-border-color = L_BRDBAS;
+
+        rounding        = L_RADSM;
+        border          = float(1);
+        cursor-border   = float(0);
+        cursor-rounding = L_RADSM;
+        padding         = L_PADZR;
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+    }
+
+    Chart -> {
+        background     = L_BGPANEL;
+        border-color   = L_BRDBAS;
+        selected-color = L_ACCBAS;
+        color          = L_ACCBAS;
+
+        border          = float(1);
+        rounding        = L_RADMD;
+        padding         = L_PADMD;
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+        show-markers    = bool(true);
+    }
+
+    Scrollbar-Vertical -> {
+        normal       = L_BGSUNK;
+        hover        = L_BGHOV;
+        active       = L_BGACT;
+        border-color = L_BRDBAS;
+
+        cursor-normal       = L_BRDSTR;
+        cursor-hover        = L_ACCBAS;
+        cursor-active       = L_ACCACT;
+        cursor-border-color = L_BRDBAS;
+
+        border          = float(1);
+        rounding        = L_RADSM;
+        border-cursor   = float(0);
+        rounding-cursor = L_RADSM;
+        padding         = L_PADSM;
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+        show-buttons    = int(0);
+
+        inc-button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+        dec-button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+        inc-symbol = symbol(TRIANGLE_DOWN);
+        dec-symbol = symbol(TRIANGLE_UP);
+    }
+
+    Scrollbar-Horizontal -> {
+        normal       = L_BGSUNK;
+        hover        = L_BGHOV;
+        active       = L_BGACT;
+        border-color = L_BRDBAS;
+
+        cursor-normal       = L_BRDSTR;
+        cursor-hover        = L_ACCBAS;
+        cursor-active       = L_ACCACT;
+        cursor-border-color = L_BRDBAS;
+
+        border          = float(1);
+        rounding        = L_RADSM;
+        border-cursor   = float(0);
+        rounding-cursor = L_RADSM;
+        padding         = L_PADSM;
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+        show-buttons    = int(0);
+
+        inc-button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+        dec-button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+        inc-symbol = symbol(TRIANGLE_RIGHT);
+        dec-symbol = symbol(TRIANGLE_LEFT);
+    }
+
+    Edit -> {
+        normal       = L_BGPANEL;
+        hover        = L_BGHOV;
+        active       = L_BGPANEL;
+        border-color = L_BRDBAS;
+
+        cursor-normal      = L_ACCBAS;
+        cursor-hover       = L_ACCHOV;
+        cursor-text-normal = L_TXTBAS;
+        cursor-text-hover  = L_TXTBAS;
+
+        text-normal = L_TXTBAS;
+        text-hover  = L_TXTBAS;
+        text-active = L_TXTBAS;
+
+        selected-normal      = L_ACCBAS;
+        selected-hover       = L_ACCHOV;
+        selected-text-normal = L_TXTACC;
+        selected-text-hover  = L_TXTACC;
+
+        border          = float(1);
+        rounding        = L_RADSM;
+        cursor-size     = float(1);
+        scrollbar-size  = vec2(10, 10);
+        padding         = L_PADMD;
+        row-padding     = float(2);
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+
+        scrollbar -> {
+            normal       = L_BGSUNK;
+            hover        = L_BGHOV;
+            active       = L_BGACT;
+            border-color = L_BRDBAS;
+
+            cursor-normal       = L_BRDSTR;
+            cursor-hover        = L_ACCBAS;
+            cursor-active       = L_ACCACT;
+            cursor-border-color = L_BRDBAS;
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            border-cursor   = float(0);
+            rounding-cursor = L_RADSM;
+            padding         = L_PADSM;
+            color-factor    = float(1);
+            disabled-factor = L_DISFAC;
+            show-buttons    = int(0);
+
+            inc-button -> {
+                normal          = L_BGPANEL;
+                hover           = L_BGHOV;
+                active          = L_BGACT;
+                border-color    = L_BRDBAS;
+                bg-color-factor = float(1);
+
+                text-background   = L_BGPANEL;
+                text-normal       = L_TXTBAS;
+                text-hover        = L_TXTBAS;
+                text-active       = L_ACCBAS;
+                text-alignment    = align(CENTERED);
+                text-color-factor = float(1);
+
+                border          = float(1);
+                rounding        = L_RADSM;
+                padding         = L_PADSM;
+                image-padding   = L_PADSM;
+                touch-padding   = L_PADSM;
+                disabled-factor = L_DISFAC;
+            }
+            dec-button -> {
+                normal          = L_BGPANEL;
+                hover           = L_BGHOV;
+                active          = L_BGACT;
+                border-color    = L_BRDBAS;
+                bg-color-factor = float(1);
+
+                text-background   = L_BGPANEL;
+                text-normal       = L_TXTBAS;
+                text-hover        = L_TXTBAS;
+                text-active       = L_ACCBAS;
+                text-alignment    = align(CENTERED);
+                text-color-factor = float(1);
+
+                border          = float(1);
+                rounding        = L_RADSM;
+                padding         = L_PADSM;
+                image-padding   = L_PADSM;
+                touch-padding   = L_PADSM;
+                disabled-factor = L_DISFAC;
+            }
+            inc-symbol = symbol(TRIANGLE_DOWN);
+            dec-symbol = symbol(TRIANGLE_UP);
+        }
+    }
+
+    Property -> {
+        normal       = L_BGPANEL;
+        hover        = L_BGHOV;
+        active       = L_BGACT;
+        border-color = L_BRDBAS;
+
+        label-normal = L_TXTBAS;
+        label-hover  = L_TXTBAS;
+        label-active = L_ACCBAS;
+
+        sym-left  = symbol(TRIANGLE_LEFT);
+        sym-right = symbol(TRIANGLE_RIGHT);
+
+        border          = float(1);
+        rounding        = L_RADSM;
+        padding         = L_PADSM;
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+
+        edit-entry -> {
+            normal       = L_BGPANEL;
+            hover        = L_BGHOV;
+            active       = L_BGPANEL;
+            border-color = L_BRDBAS;
+
+            cursor-normal      = L_ACCBAS;
+            cursor-hover       = L_ACCHOV;
+            cursor-text-normal = L_TXTBAS;
+            cursor-text-hover  = L_TXTBAS;
+
+            text-normal = L_TXTBAS;
+            text-hover  = L_TXTBAS;
+            text-active = L_TXTBAS;
+
+            selected-normal      = L_ACCBAS;
+            selected-hover       = L_ACCHOV;
+            selected-text-normal = L_TXTACC;
+            selected-text-hover  = L_TXTACC;
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            cursor-size     = float(1);
+            scrollbar-size  = vec2(10, 10);
+            padding         = L_PADSM;
+            row-padding     = float(2);
+            color-factor    = float(1);
+            disabled-factor = L_DISFAC;
+
+            scrollbar -> {
+                normal       = L_BGSUNK;
+                hover        = L_BGHOV;
+                active       = L_BGACT;
+                border-color = L_BRDBAS;
+
+                cursor-normal       = L_BRDSTR;
+                cursor-hover        = L_ACCBAS;
+                cursor-active       = L_ACCACT;
+                cursor-border-color = L_BRDBAS;
+
+                border          = float(1);
+                rounding        = L_RADSM;
+                border-cursor   = float(0);
+                rounding-cursor = L_RADSM;
+                padding         = L_PADSM;
+                color-factor    = float(1);
+                disabled-factor = L_DISFAC;
+                show-buttons    = int(0);
+
+                inc-symbol = symbol(TRIANGLE_DOWN);
+                dec-symbol = symbol(TRIANGLE_UP);
+            }
+        }
+
+        inc-button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+        dec-button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+    }
+
+    Tree -> {
+        background   = L_BGPANEL;
+        border-color = L_BRDBAS;
+        text         = L_TXTBAS;
+
+        border          = float(1);
+        rounding        = L_RADSM;
+        indent          = float(14);
+        padding         = L_PADSM;
+        spacing         = vec2(4, 2);
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+
+        tab-maximize-button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+        tab-minimize-button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+        node-maximize-button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+        node-minimize-button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+        sym-minimize = symbol(TRIANGLE_UP);
+        sym-maximize = symbol(TRIANGLE_DOWN);
+    }
+
+    Combobox -> {
+        normal       = L_BGPANEL;
+        hover        = L_BGHOV;
+        active       = L_BGACT;
+        border-color = L_BRDBAS;
+
+        label-normal = L_TXTBAS;
+        label-hover  = L_TXTBAS;
+        label-active = L_TXTBAS;
+
+        symbol-normal = L_TXTMUT;
+        symbol-hover  = L_TXTBAS;
+        symbol-active = L_ACCBAS;
+
+        sym-normal = symbol(TRIANGLE_DOWN);
+        sym-hover  = symbol(TRIANGLE_DOWN);
+        sym-active = symbol(TRIANGLE_DOWN);
+
+        button -> {
+            normal          = L_BGPANEL;
+            hover           = L_BGHOV;
+            active          = L_BGACT;
+            border-color    = L_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = L_BGPANEL;
+            text-normal       = L_TXTBAS;
+            text-hover        = L_TXTBAS;
+            text-active       = L_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = L_RADSM;
+            padding         = L_PADSM;
+            image-padding   = L_PADSM;
+            touch-padding   = L_PADSM;
+            disabled-factor = L_DISFAC;
+        }
+
+        border          = float(1);
+        rounding        = L_RADSM;
+        content-padding = L_PADMD;
+        button-padding  = L_PADSM;
+        spacing         = vec2(4, 0);
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+    }
+
+    Knob -> {
+        normal       = L_BGSUNK;
+        hover        = L_BGHOV;
+        active       = L_BGACT;
+        border-color = L_BRDBAS;
+
+        knob-normal       = L_BGPANEL;
+        knob-hover        = L_BGHOV;
+        knob-active       = L_ACCBAS;
+        knob-border-color = L_BRDBAS;
+
+        cursor-normal = L_ACCBAS;
+        cursor-hover  = L_ACCHOV;
+        cursor-active = L_ACCACT;
+
+        border          = float(1);
+        knob-border     = float(1);
+        padding         = L_PADMD;
+        spacing         = L_PADSM;
+        cursor-width    = float(2);
+        color-factor    = float(1);
+        disabled-factor = L_DISFAC;
+    }
+}
+
+
+theme-variation: Dark {
+    Window -> {
+        Header -> {
+            normal = D_BGPANEL;
+            hover  = D_BGHOV;
+            active = D_BGACT;
+
+            close -> {
+                normal          = D_BGPANEL;
+                hover           = D_BGDANGER;
+                active          = D_BGDANGACT;
+                border-color    = D_BRDBAS;
+                bg-color-factor = float(1);
+
+                text-background   = D_BGPANEL;
+                text-normal       = D_TXTMUT;
+                text-hover        = D_TXTACC;
+                text-active       = D_TXTACC;
+                text-alignment    = align(CENTERED);
+                text-color-factor = float(1);
+
+                border          = float(0);
+                rounding        = D_RADSM;
+                padding         = D_PADSM;
+                image-padding   = D_PADSM;
+                touch-padding   = D_PADSM;
+                disabled-factor = D_DISFAC;
+            }
+            close-symbol = symbol(X);
+
+            minimize -> {
+                normal          = D_BGPANEL;
+                hover           = D_BGHOV;
+                active          = D_BGACT;
+                border-color    = D_BRDBAS;
+                bg-color-factor = float(1);
+
+                text-background   = D_BGPANEL;
+                text-normal       = D_TXTMUT;
+                text-hover        = D_TXTBAS;
+                text-active       = D_TXTBAS;
+                text-alignment    = align(CENTERED);
+                text-color-factor = float(1);
+
+                border          = float(0);
+                rounding        = D_RADSM;
+                padding         = D_PADSM;
+                image-padding   = D_PADSM;
+                touch-padding   = D_PADSM;
+                disabled-factor = D_DISFAC;
+            }
+            minimize-symbol = symbol(MINUS);
+            maximize-symbol = symbol(MAX);
+
+            label-normal = D_TXTBAS;
+            label-hover  = D_TXTBAS;
+            label-active = D_ACCBAS;
+
+            header-align  = bool(true);
+            padding       = vec2(6, 4);
+            label-padding = vec2(8, 0);
+            spacing       = vec2(6, 0);
+        }
+
+        background-fixed        = D_BGPANEL;
+        background              = D_BGMAIN;
+        border-color            = D_BRDBAS;
+        popup-border-color      = D_BRDSTR;
+        combo-border-color      = D_BRDBAS;
+        contextual-border-color = D_BRDBAS;
+        menu-border-color       = D_BRDBAS;
+        group-border-color      = D_BRDBAS;
+        tooltip-border-color    = D_BRDBAS;
+        scaler                  = D_BGPANEL;
+
+        border                 = float(1);
+        combo-border           = float(1);
+        contextual-border      = float(1);
+        menu-border            = float(1);
+        group-border           = float(1);
+        tooltip-border         = float(1);
+        popup-border           = float(1);
+        min-row-height-padding = float(4);
+
+        rounding       = D_RADMD;
+        spacing        = vec2(6, 6);
+        scrollbar_size = vec2(14, 14);
+        min_size       = vec2(320, 240);
+
+        padding            = D_PADMD;
+        group_padding      = D_PADMD;
+        popup_padding      = D_PADMD;
+        combo_padding      = D_PADMD;
+        contextual_padding = D_PADMD;
+        menu_padding       = D_PADMD;
+        tooltip_padding    = D_PADSM;
+
+        tooltip-origin = tooltipPos(BOTTOM_CENTER);
+        tooltip-offset = vec2(0, 4);
+    }
+
+    Text -> {
+        color           = D_TXTBAS;
+        padding         = D_PADZR;
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+    }
+
+    Button -> {
+        normal          = D_BGPANEL;
+        hover           = D_BGHOV;
+        active          = D_ACCBAS;
+        border-color    = D_BRDBAS;
+        bg-color-factor = float(1);
+
+        text-background   = D_BGPANEL;
+        text-normal       = D_TXTBAS;
+        text-hover        = D_TXTBAS;
+        text-active       = D_TXTACC;
+        text-alignment    = align(CENTERED);
+        text-color-factor = float(1);
+
+        border          = float(1);
+        rounding        = D_RADMD;
+        padding         = D_PADMD;
+        image-padding   = D_PADSM;
+        touch-padding   = D_PADSM;
+        disabled-factor = D_DISFAC;
+    }
+
+    Contextual-Button -> {
+        normal          = D_BGPANEL;
+        hover           = D_BGHOV;
+        active          = D_BGACT;
+        border-color    = D_BRDBAS;
+        bg-color-factor = float(1);
+
+        text-background   = D_BGPANEL;
+        text-normal       = D_TXTBAS;
+        text-hover        = D_TXTBAS;
+        text-active       = D_ACCBAS;
+        text-alignment    = align(LEFT);
+        text-color-factor = float(1);
+
+        border          = float(1);
+        rounding        = D_RADMD;
+        padding         = D_PADMD;
+        image-padding   = D_PADSM;
+        touch-padding   = D_PADSM;
+        disabled-factor = D_DISFAC;
+    }
+
+    Menu-Button -> {
+        normal          = D_BGPANEL;
+        hover           = D_BGHOV;
+        active          = D_BGACT;
+        border-color    = D_BRDBAS;
+        bg-color-factor = float(1);
+
+        text-background   = D_BGPANEL;
+        text-normal       = D_TXTBAS;
+        text-hover        = D_TXTBAS;
+        text-active       = D_ACCBAS;
+        text-alignment    = align(LEFT);
+        text-color-factor = float(1);
+
+        border          = float(1);
+        rounding        = D_RADSM;
+        padding         = D_PADMD;
+        image-padding   = D_PADSM;
+        touch-padding   = D_PADSM;
+        disabled-factor = D_DISFAC;
+    }
+
+    Radio-Button -> {
+        normal        = D_BGPANEL;
+        hover         = D_BGHOV;
+        active        = D_BGACT;
+        border-color  = D_BRDBAS;
+
+        cursor-normal = D_BGPANEL;
+        cursor-hover  = D_ACCBAS;
+
+        text-background = D_BGPANEL;
+        text-normal     = D_TXTBAS;
+        text-hover      = D_TXTBAS;
+        text-active     = D_TXTBAS;
+        text-alignment  = align(LEFT);
+
+        padding       = D_PADMD;
+        touch-padding = D_PADSM;
+
+        spacing         = float(6);
+        border          = float(1);
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+    }
+
+    Checkbox -> {
+        normal        = D_BGPANEL;
+        hover         = D_BGHOV;
+        active        = D_ACCBAS;
+        border-color  = D_BRDBAS;
+
+        cursor-normal = D_BGPANEL;
+        cursor-hover  = D_ACCHOV;
+
+        text-background = D_BGPANEL;
+        text-normal     = D_TXTBAS;
+        text-hover      = D_TXTBAS;
+        text-active     = D_TXTACC;
+        text-alignment  = align(LEFT);
+
+        padding       = D_PADMD;
+        touch-padding = D_PADSM;
+
+        spacing         = float(6);
+        border          = float(1);
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+    }
+
+    Selectable -> {
+        normal  = D_BGPANEL;
+        pressed = D_BGACT;
+        hover   = D_BGHOV;
+
+        active-normal  = D_ACCBAS;
+        active-pressed = D_ACCPRS;
+        active-hover   = D_ACCHOV;
+
+        text-normal  = D_TXTBAS;
+        text-pressed = D_TXTBAS;
+        text-hover   = D_TXTBAS;
+
+        active-text-normal  = D_TXTACC;
+        active-text-pressed = D_TXTACC;
+        active-text-hover   = D_TXTACC;
+        bg-text             = D_BGPANEL;
+        text-alignment      = align(LEFT);
+
+        rounding        = D_RADSM;
+        padding         = D_PADMD;
+        touch-padding   = D_PADSM;
+        image-padding   = D_PADSM;
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+    }
+
+    Slider -> {
+        normal       = D_BGSUNK;
+        hover        = D_BGHOV;
+        active       = D_BGACT;
+        border-color = D_BRDBAS;
+
+        bar-normal = D_ACCBAS;
+        bar-hover  = D_ACCHOV;
+        bar-active = D_ACCACT;
+        bar-filled = D_ACCBAS;
+
+        cursor-normal = D_BGPANEL;
+        cursor-hover  = D_ACCHOV;
+        cursor-active = D_ACCBAS;
+
+        border          = float(1);
+        rounding        = D_RADSM;
+        bar-height      = float(4);
+        padding         = D_PADSM;
+        spacing         = D_PADSM;
+        cursor-size     = vec2(14, 14);
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+        show-buttons    = int(0);
+
+        inc-button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+        dec-button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+        inc-symbol = symbol(PLUS);
+        dec-symbol = symbol(MINUS);
+    }
+
+    Progress -> {
+        normal       = D_BGSUNK;
+        hover        = D_BGHOV;
+        active       = D_BGACT;
+        border-color = D_BRDBAS;
+
+        cursor-normal       = D_ACCBAS;
+        cursor-hover        = D_ACCHOV;
+        cursor-active       = D_ACCACT;
+        cursor-border-color = D_BRDBAS;
+
+        rounding        = D_RADSM;
+        border          = float(1);
+        cursor-border   = float(0);
+        cursor-rounding = D_RADSM;
+        padding         = D_PADZR;
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+    }
+
+    Chart -> {
+        background     = D_BGPANEL;
+        border-color   = D_BRDBAS;
+        selected-color = D_ACCBAS;
+        color          = D_ACCBAS;
+
+        border          = float(1);
+        rounding        = D_RADMD;
+        padding         = D_PADMD;
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+        show-markers    = bool(true);
+    }
+
+    Scrollbar-Vertical -> {
+        normal       = D_BGSUNK;
+        hover        = D_BGHOV;
+        active       = D_BGACT;
+        border-color = D_BRDBAS;
+
+        cursor-normal       = D_BRDSTR;
+        cursor-hover        = D_ACCBAS;
+        cursor-active       = D_ACCACT;
+        cursor-border-color = D_BRDBAS;
+
+        border          = float(1);
+        rounding        = D_RADSM;
+        border-cursor   = float(0);
+        rounding-cursor = D_RADSM;
+        padding         = D_PADSM;
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+        show-buttons    = int(0);
+
+        inc-button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+        dec-button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+        inc-symbol = symbol(TRIANGLE_DOWN);
+        dec-symbol = symbol(TRIANGLE_UP);
+    }
+
+    Scrollbar-Horizontal -> {
+        normal       = D_BGSUNK;
+        hover        = D_BGHOV;
+        active       = D_BGACT;
+        border-color = D_BRDBAS;
+
+        cursor-normal       = D_BRDSTR;
+        cursor-hover        = D_ACCBAS;
+        cursor-active       = D_ACCACT;
+        cursor-border-color = D_BRDBAS;
+
+        border          = float(1);
+        rounding        = D_RADSM;
+        border-cursor   = float(0);
+        rounding-cursor = D_RADSM;
+        padding         = D_PADSM;
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+        show-buttons    = int(0);
+
+        inc-button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+        dec-button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+        inc-symbol = symbol(TRIANGLE_RIGHT);
+        dec-symbol = symbol(TRIANGLE_LEFT);
+    }
+
+    Edit -> {
+        normal       = D_BGPANEL;
+        hover        = D_BGHOV;
+        active       = D_BGPANEL;
+        border-color = D_BRDBAS;
+
+        cursor-normal      = D_ACCBAS;
+        cursor-hover       = D_ACCHOV;
+        cursor-text-normal = D_TXTBAS;
+        cursor-text-hover  = D_TXTBAS;
+
+        text-normal = D_TXTBAS;
+        text-hover  = D_TXTBAS;
+        text-active = D_TXTBAS;
+
+        selected-normal      = D_ACCBAS;
+        selected-hover       = D_ACCHOV;
+        selected-text-normal = D_TXTACC;
+        selected-text-hover  = D_TXTACC;
+
+        border          = float(1);
+        rounding        = D_RADSM;
+        cursor-size     = float(1);
+        scrollbar-size  = vec2(10, 10);
+        padding         = D_PADMD;
+        row-padding     = float(2);
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+
+        scrollbar -> {
+            normal       = D_BGSUNK;
+            hover        = D_BGHOV;
+            active       = D_BGACT;
+            border-color = D_BRDBAS;
+
+            cursor-normal       = D_BRDSTR;
+            cursor-hover        = D_ACCBAS;
+            cursor-active       = D_ACCACT;
+            cursor-border-color = D_BRDBAS;
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            border-cursor   = float(0);
+            rounding-cursor = D_RADSM;
+            padding         = D_PADSM;
+            color-factor    = float(1);
+            disabled-factor = D_DISFAC;
+            show-buttons    = int(0);
+
+            inc-button -> {
+                normal          = D_BGPANEL;
+                hover           = D_BGHOV;
+                active          = D_BGACT;
+                border-color    = D_BRDBAS;
+                bg-color-factor = float(1);
+
+                text-background   = D_BGPANEL;
+                text-normal       = D_TXTBAS;
+                text-hover        = D_TXTBAS;
+                text-active       = D_ACCBAS;
+                text-alignment    = align(CENTERED);
+                text-color-factor = float(1);
+
+                border          = float(1);
+                rounding        = D_RADSM;
+                padding         = D_PADSM;
+                image-padding   = D_PADSM;
+                touch-padding   = D_PADSM;
+                disabled-factor = D_DISFAC;
+            }
+            dec-button -> {
+                normal          = D_BGPANEL;
+                hover           = D_BGHOV;
+                active          = D_BGACT;
+                border-color    = D_BRDBAS;
+                bg-color-factor = float(1);
+
+                text-background   = D_BGPANEL;
+                text-normal       = D_TXTBAS;
+                text-hover        = D_TXTBAS;
+                text-active       = D_ACCBAS;
+                text-alignment    = align(CENTERED);
+                text-color-factor = float(1);
+
+                border          = float(1);
+                rounding        = D_RADSM;
+                padding         = D_PADSM;
+                image-padding   = D_PADSM;
+                touch-padding   = D_PADSM;
+                disabled-factor = D_DISFAC;
+            }
+            inc-symbol = symbol(TRIANGLE_DOWN);
+            dec-symbol = symbol(TRIANGLE_UP);
+        }
+    }
+
+    Property -> {
+        normal       = D_BGPANEL;
+        hover        = D_BGHOV;
+        active       = D_BGACT;
+        border-color = D_BRDBAS;
+
+        label-normal = D_TXTBAS;
+        label-hover  = D_TXTBAS;
+        label-active = D_ACCBAS;
+
+        sym-left  = symbol(TRIANGLE_LEFT);
+        sym-right = symbol(TRIANGLE_RIGHT);
+
+        border          = float(1);
+        rounding        = D_RADSM;
+        padding         = D_PADSM;
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+
+        edit-entry -> {
+            normal       = D_BGPANEL;
+            hover        = D_BGHOV;
+            active       = D_BGPANEL;
+            border-color = D_BRDBAS;
+
+            cursor-normal      = D_ACCBAS;
+            cursor-hover       = D_ACCHOV;
+            cursor-text-normal = D_TXTBAS;
+            cursor-text-hover  = D_TXTBAS;
+
+            text-normal = D_TXTBAS;
+            text-hover  = D_TXTBAS;
+            text-active = D_TXTBAS;
+
+            selected-normal      = D_ACCBAS;
+            selected-hover       = D_ACCHOV;
+            selected-text-normal = D_TXTACC;
+            selected-text-hover  = D_TXTACC;
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            cursor-size     = float(1);
+            scrollbar-size  = vec2(10, 10);
+            padding         = D_PADSM;
+            row-padding     = float(2);
+            color-factor    = float(1);
+            disabled-factor = D_DISFAC;
+
+            scrollbar -> {
+                normal       = D_BGSUNK;
+                hover        = D_BGHOV;
+                active       = D_BGACT;
+                border-color = D_BRDBAS;
+
+                cursor-normal       = D_BRDSTR;
+                cursor-hover        = D_ACCBAS;
+                cursor-active       = D_ACCACT;
+                cursor-border-color = D_BRDBAS;
+
+                border          = float(1);
+                rounding        = D_RADSM;
+                border-cursor   = float(0);
+                rounding-cursor = D_RADSM;
+                padding         = D_PADSM;
+                color-factor    = float(1);
+                disabled-factor = D_DISFAC;
+                show-buttons    = int(0);
+
+                inc-symbol = symbol(TRIANGLE_DOWN);
+                dec-symbol = symbol(TRIANGLE_UP);
+            }
+        }
+
+        inc-button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+        dec-button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+    }
+
+    Tree -> {
+        background   = D_BGPANEL;
+        border-color = D_BRDBAS;
+        text         = D_TXTBAS;
+
+        border          = float(1);
+        rounding        = D_RADSM;
+        indent          = float(14);
+        padding         = D_PADSM;
+        spacing         = vec2(4, 2);
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+
+        tab-maximize-button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+        tab-minimize-button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+        node-maximize-button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+        node-minimize-button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+        sym-minimize = symbol(TRIANGLE_UP);
+        sym-maximize = symbol(TRIANGLE_DOWN);
+    }
+
+    Combobox -> {
+        normal       = D_BGPANEL;
+        hover        = D_BGHOV;
+        active       = D_BGACT;
+        border-color = D_BRDBAS;
+
+        label-normal = D_TXTBAS;
+        label-hover  = D_TXTBAS;
+        label-active = D_TXTBAS;
+
+        symbol-normal = D_TXTMUT;
+        symbol-hover  = D_TXTBAS;
+        symbol-active = D_ACCBAS;
+
+        sym-normal = symbol(TRIANGLE_DOWN);
+        sym-hover  = symbol(TRIANGLE_DOWN);
+        sym-active = symbol(TRIANGLE_DOWN);
+
+        button -> {
+            normal          = D_BGPANEL;
+            hover           = D_BGHOV;
+            active          = D_BGACT;
+            border-color    = D_BRDBAS;
+            bg-color-factor = float(1);
+
+            text-background   = D_BGPANEL;
+            text-normal       = D_TXTBAS;
+            text-hover        = D_TXTBAS;
+            text-active       = D_ACCBAS;
+            text-alignment    = align(CENTERED);
+            text-color-factor = float(1);
+
+            border          = float(1);
+            rounding        = D_RADSM;
+            padding         = D_PADSM;
+            image-padding   = D_PADSM;
+            touch-padding   = D_PADSM;
+            disabled-factor = D_DISFAC;
+        }
+
+        border          = float(1);
+        rounding        = D_RADSM;
+        content-padding = D_PADMD;
+        button-padding  = D_PADSM;
+        spacing         = vec2(4, 0);
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+    }
+
+    Knob -> {
+        normal       = D_BGSUNK;
+        hover        = D_BGHOV;
+        active       = D_BGACT;
+        border-color = D_BRDBAS;
+
+        knob-normal       = D_BGPANEL;
+        knob-hover        = D_BGHOV;
+        knob-active       = D_ACCBAS;
+        knob-border-color = D_BRDBAS;
+
+        cursor-normal = D_ACCBAS;
+        cursor-hover  = D_ACCHOV;
+        cursor-active = D_ACCACT;
+
+        border          = float(1);
+        knob-border     = float(1);
+        padding         = D_PADMD;
+        spacing         = D_PADSM;
+        cursor-width    = float(2);
+        color-factor    = float(1);
+        disabled-factor = D_DISFAC;
+    }
+}
+
+theme-variation-default: Light;

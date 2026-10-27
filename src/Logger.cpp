@@ -29,64 +29,54 @@ std::string NLLogger::ansiCode(ConColors c) {
     return "\033[0m";
 }
 
-
-void NLLogger::Setup(bool production, std::string ComponentName, std::stack<std::string>* logStack)
-{
+void NLLogger::SetOutCallbacks(NLLogger_OutCallbacks cb) {
+    usingCb = true;
+    this->cb = cb;
+}
+void NLLogger::UnsetOutCallbacks() {
+    usingCb = false;
+}
+void NLLogger::Setup(bool production, std::string ComponentName) {
     this->production = production;
-    this->toLogStack = false;
-    if (logStack != nullptr) {
-        this->logStack = logStack;
-        this->toLogStack = true;
-    }
-    this->name = "[" + ComponentName + "]";
+    if (ComponentName != "") this->name = "[" + ComponentName + "]";
 }
 
 void NLLogger::Warning(std::string warning) {
     std::string message = ansiCode(GRAY_B) + name + ansiCode(YELLOW_B) + " [Warning]: " + ansiCode(STANDART) + ansiCode(YELLOW) + warning + ansiCode(STANDART);
-    if (toLogStack) {
-        logStack->push(message);
-    }
-    std::cout << message << std::endl;
+    if (usingCb) cb.Warning(message);
+    else std::cout << message << std::endl;
 }
 void NLLogger::Error(std::string error, bool critical) {
     std::string message;
     if (critical) {
         message = ansiCode(GRAY_B) + name + ansiCode(RED_B) + " [Critical Error]: " + error + ansiCode(STANDART);
-        if (toLogStack) {
-            logStack->push(message);
-        }
-        std::cout << message << std::endl;
+        if (usingCb) cb.Error(message);
+        else std::cout << message << std::endl;
         std::exit(1);
-    } else {
+    } 
+    else {
         message = ansiCode(GRAY_B) + name + ansiCode(RED_B) + " [Error]: " + ansiCode(STANDART) + ansiCode(RED) + error + ansiCode(STANDART);
-        if (toLogStack) {
-            logStack->push(message);
-        }
-        std::cout << message << std::endl;
+        if (usingCb) cb.Error(message);
+        else std::cout << message << std::endl;
     }
 }
 void NLLogger::Warning(std::string warning, std::string layer) {
     std::string message = ansiCode(GRAY_B) + name + ansiCode(YELLOW_B) + " [Warning] " + ansiCode(WHITE_B) + "[" + layer + "]: " + ansiCode(STANDART) + ansiCode(YELLOW) + warning + ansiCode(STANDART);
-    if (toLogStack) {
-        logStack->push(message);
-    }
-    std::cout << message << std::endl;
+    if (usingCb) cb.Warning(message);
+    else std::cout << message << std::endl;
 }
 void NLLogger::Error(std::string error, bool critical, std::string layer) {
     std::string message;
     if (critical) {
         message = ansiCode(GRAY_B) + name + ansiCode(RED_B) + " [Critical Error] "  + ansiCode(WHITE_B) + "[" + layer + "]: " + ansiCode(RED_B) + error + ansiCode(STANDART);
-        if (toLogStack) {
-            logStack->push(message);
-        }
-        std::cout << message << std::endl;
+        if (usingCb) cb.Error(message);
+        else std::cout << message << std::endl;
         std::exit(1);
-    } else {
+    } 
+    else {
         message = ansiCode(GRAY_B) + name + ansiCode(RED_B) + " [Error] " + ansiCode(WHITE_B) + "[" + layer + "]: " + ansiCode(STANDART) + ansiCode(RED) + error + ansiCode(STANDART);
-        if (toLogStack) {
-            logStack->push(message);
-        }
-        std::cout << message << std::endl;
+        if (usingCb) cb.Error(message);
+        else std::cout << message << std::endl;
     }
 }
 
@@ -94,16 +84,13 @@ void NLLogger::Info(std::string info, ConColors color, bool productionLatency) {
     std::string message = ansiCode(GRAY_B) + name + ansiCode(SANDY_B) + " [Info]: " + ansiCode(STANDART) + ansiCode(color) + info + ansiCode(STANDART);
     if (production) {
         if (productionLatency) {
-            if (toLogStack) {
-                logStack->push(message);
-            }
-            std::cout << message << std::endl;
+            if (usingCb) cb.Info(message);
+            else std::cout << message << std::endl;
         }
-    } else {
-        if (toLogStack) {
-            logStack->push(message);
-        }
-        std::cout << message << std::endl;
+    } 
+    else {
+        if (usingCb) cb.Info(message);
+        else std::cout << message << std::endl;
     }
 }
 void NLLogger::SetBlacklist(std::vector<std::string> bl) {
@@ -123,15 +110,12 @@ void NLLogger::Info(std::string info, ConColors color, bool productionLatency, s
     std::string message = ansiCode(GRAY_B) + name + ansiCode(SANDY_B) + " [Info] " + ansiCode(WHITE_B) + "["+layer+"]: " + ansiCode(STANDART) + ansiCode(color) + info + ansiCode(STANDART);
     if (production) {
         if (productionLatency) {
-            if (toLogStack) {
-                logStack->push(message);
-            }
-            std::cout << message << std::endl;
+            if (usingCb) cb.Info(message);
+            else std::cout << message << std::endl;
         }
-    } else {
-        if (toLogStack) {
-            logStack->push(message);
-        }
-        std::cout << message << std::endl;
+    } 
+    else {
+        if (usingCb) cb.Info(message);
+        else std::cout << message << std::endl;
     }
 }

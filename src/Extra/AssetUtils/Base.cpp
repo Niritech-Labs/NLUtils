@@ -14,12 +14,7 @@ void AssetManager::Shutdown() {
     modelCache.clear();
 }
 
-void AssetManager::SetBlacklist(std::vector<std::string> bl) {
-    this->Logger.SetBlacklist(bl);
-}
-void AssetManager::SetWhitelist(std::vector<std::string> wl) {
-    this->Logger.SetWhitelist(wl);
-}
+
 
 void AssetManager::Setup(bool production) {
     Logger.Setup(production,"AssetManager");

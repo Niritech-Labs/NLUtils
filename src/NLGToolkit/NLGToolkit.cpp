@@ -69,6 +69,12 @@ NLGTContext* NLGT::Init(NLGTConfig config) {
     return &ctx;
 }
 
+glm::vec2 NLGT::GetCurrentWinSize() {
+    int w,h;
+    glfwGetWindowSize(ctx.window,&w,&h);
+    return glm::vec2(w,h);
+}
+
 std::unordered_map<std::string,struct nk_font*> NLGT::GetFonts() {
     return fonts;
 }

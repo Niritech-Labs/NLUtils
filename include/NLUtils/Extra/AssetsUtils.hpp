@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include "../XMLUtils.hpp"
+#include "../EnderIO/XML.hpp"
 #include "GMA.hpp"
 #include <Nuklear.h>
 #include "../Logger.hpp"
@@ -17,7 +17,7 @@ public:
 
 private:
     NLLogger* Logger;
-    XMLManager xmlm;
+    Pugi_XMLParser xmlm;
 
     struct ParsedSource;
     struct VertexInputBinding;
@@ -93,12 +93,12 @@ public:
             glm::vec3 CubeSize;
             glm::vec1 SphereRadius;
             glm::vec2 PlaneSize;
-            uint dynamicId;
+            uint64_t dynamicId;
         } data;
-        uint GetHash() {
+        uint64_t GetHash() {
             std::hash<std::string> strHasher;
             std::hash<float> floatHasher;
-            uint h = 0;
+            uint64_t h = 0;
             switch (type) {
                 case PLANE: {
                     h = floatHasher(data.PlaneSize.x);
@@ -121,7 +121,7 @@ public:
                     break;
                 }
                 case COLLADA: {
-                    h = (uint)strHasher(data.ColladaPath);
+                    h = (uint64_t)strHasher(data.ColladaPath);
                     break;
                 }
                 case DYNAMIC: {
@@ -133,7 +133,7 @@ public:
                     break;
                 }
             }
-            h ^= (uint)type << 24;
+            h ^= (uint64_t)type << 24;
             return h;
         }
     };
@@ -150,8 +150,7 @@ public:
     struct nk_image LoadImage(const std::string& path);
     struct nk_nine_slice LoadImageNineSlice(const std::string& path, int left, int top, int right, int bottom);
     void Shutdown();
-    void SetBlacklist(std::vector<std::string> bl);
-    void SetWhitelist(std::vector<std::string> wl);
+    NL_LOGGER_METHODS
 
 private:
     bool GLInit = false;
@@ -167,7 +166,7 @@ private:
     std::map<std::string, std::pair<int, int>> textureSizes;
     GLuint loadTexture(const std::string& path);
     GLuint loadUITexture(const std::string& path);
-    std::unordered_map<uint, GLModelObject*> GLModelCache;
+    std::unordered_map<uint64_t, GLModelObject*> GLModelCache;
     std::vector<GLModelObject*> GLModels;
     GLModelObject* loadCollada(std::string path);
     GLModelObject* loadCapsule(float radius,float heihgt);
@@ -177,7 +176,7 @@ private:
     GLModelObject* loadDynamicGLMO();
     
 
-    std::unordered_map<uint, Model*> modelCache;
+    std::unordered_map<uint64_t, Model*> modelCache;
     std::vector<Model*> models;
     Model* loadColladaBase(std::string path);
     Model* loadCapsuleBase(float radius,float heihgt);
