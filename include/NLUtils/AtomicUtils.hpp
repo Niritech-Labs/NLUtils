@@ -69,40 +69,43 @@ private:
         }
 
         if (R_OrderedInWB.load(std::memory_order_acquire) && W_GetState(R_OrderedInW) && BackbufModified.load(std::memory_order_acquire)) {
-            R_SetLockState(true);
-            while (R_GetOpenTickets() != 1) {}
-            UnableRUpdateCounter.store(0,std::memory_order_release);
-            bool back = GetCurrentBackbuf();
-            SetFrontbuf(back);
-            SetBackbuf(!back);
-            R_OrderedInWB.store(false,std::memory_order_release);
-            BackbufModified.store(false,std::memory_order_release);
-            W_Close();
-            R_SetLockState(false);
+            if (R_SetLockState(true)) {
+                while (R_GetOpenTickets() != 1) {}
+                UnableRUpdateCounter.store(0,std::memory_order_release);
+                bool back = GetCurrentBackbuf();
+                SetFrontbuf(back);
+                SetBackbuf(!back);
+                R_OrderedInWB.store(false,std::memory_order_release);
+                BackbufModified.store(false,std::memory_order_release);
+                W_Close();
+                R_SetLockState(false);
+            }
         }
 
         if ((W_GetOpenTickets() == 0) && BackbufModified.load(std::memory_order_acquire)) {
-            W_SetLockState(true);
-            R_SetLockState(true);
-            while (R_GetOpenTickets() != 1) {}
-            while (W_GetOpenTickets() != 0) {}
-            UnableRUpdateCounter.store(0,std::memory_order_release);
-            bool back = GetCurrentBackbuf();
-            SetFrontbuf(back);
-            SetBackbuf(!back);
-            BackbufModified.store(false,std::memory_order_release);
-            W_SetLockState(false);
-            R_SetLockState(false);
+            if (R_SetLockState(true)) {
+                W_SetLockState(true);
+                while (R_GetOpenTickets() != 1) {}
+                while (W_GetOpenTickets() != 0) {}
+                UnableRUpdateCounter.store(0,std::memory_order_release);
+                bool back = GetCurrentBackbuf();
+                SetFrontbuf(back);
+                SetBackbuf(!back);
+                BackbufModified.store(false,std::memory_order_release);
+                W_SetLockState(false);
+                R_SetLockState(false);
+            }
         }
 
         if (((W_GetOpenTickets() >= MaxWTicketsDifference) || (UnableRUpdateCounter.load(std::memory_order_acquire) >= MaxRUnableUpdate)) && !R_OrderedInWB.load(std::memory_order_acquire) && BackbufModified.load(std::memory_order_acquire)) {
-            R_SetLockState(true);
-            while (R_GetOpenTickets() != 1) {}
-            if (!R_OrderedInWB.load(std::memory_order_acquire)) {
-                R_OrderedInW = W_Order(false);
-                R_OrderedInWB.store(true,std::memory_order_release);
+            if (R_SetLockState(true)) {
+                while (R_GetOpenTickets() != 1) {}
+                if (!R_OrderedInWB.load(std::memory_order_acquire)) {
+                    R_OrderedInW = W_Order(false);
+                    R_OrderedInWB.store(true,std::memory_order_release);
+                }
+                R_SetLockState(false);
             }
-            R_SetLockState(false);
         }
 
         return frontPtr;
@@ -132,10 +135,10 @@ private:
     LO trueBuf1;
     LO falseBuf0;
 
-    uint64_t R_OrderedInW = 0;
+    std::atomic<uint64_t> R_OrderedInW = 0;
     alignas(64) std::atomic<bool> R_OrderedInWB = false;
     
-    void R_SetLockState(bool lock);
+    bool R_SetLockState(bool lock);
     uint64_t R_Order();
     uint64_t R_GetOpenTickets();
     void R_Close();
@@ -159,8 +162,13 @@ void NLAtomic<LO>::W_SetLockState(bool lock) {
     W_Lock.store(lock,std::memory_order_release);
 }
 template <typename LO>
-void NLAtomic<LO>::R_SetLockState(bool lock) {
-    R_Lock.store(lock,std::memory_order_release);
+bool NLAtomic<LO>::R_SetLockState(bool lock) {
+    if (lock) {
+        bool expected = false;
+        return R_Lock.compare_exchange_strong(expected, true, std::memory_order_acq_rel, std::memory_order_acquire);
+    }
+    R_Lock.store(false, std::memory_order_release);
+    return true;
 }
 
 template <typename LO>
@@ -370,40 +378,43 @@ private:
         }
 
         if (R_OrderedInWB.load(std::memory_order_acquire) && W_GetState(R_OrderedInW) && BackbufModified.load(std::memory_order_acquire)) {
-            R_SetLockState(true);
-            while (R_GetOpenTickets() != 1) {}
-            UnableRUpdateCounter.store(0,std::memory_order_release);
-            bool back = GetCurrentBackbuf();
-            SetFrontbuf(back);
-            SetBackbuf(!back);
-            R_OrderedInWB.store(false,std::memory_order_release);
-            BackbufModified.store(false,std::memory_order_release);
-            W_Close();
-            R_SetLockState(false);
+            if (R_SetLockState(true)) {
+                while (R_GetOpenTickets() != 1) {}
+                UnableRUpdateCounter.store(0,std::memory_order_release);
+                bool back = GetCurrentBackbuf();
+                SetFrontbuf(back);
+                SetBackbuf(!back);
+                R_OrderedInWB.store(false,std::memory_order_release);
+                BackbufModified.store(false,std::memory_order_release);
+                W_Close();
+                R_SetLockState(false);
+            }
         }
 
         if ((W_GetOpenTickets() == 0) && BackbufModified.load(std::memory_order_acquire)) {
-            W_SetLockState(true);
-            R_SetLockState(true);
-            while (R_GetOpenTickets() != 1) {}
-            while (W_GetOpenTickets() != 0) {}
-            UnableRUpdateCounter.store(0,std::memory_order_release);
-            bool back = GetCurrentBackbuf();
-            SetFrontbuf(back);
-            SetBackbuf(!back);
-            BackbufModified.store(false,std::memory_order_release);
-            W_SetLockState(false);
-            R_SetLockState(false);
+            if (R_SetLockState(true)) {
+                W_SetLockState(true);
+                while (R_GetOpenTickets() != 1) {}
+                while (W_GetOpenTickets() != 0) {}
+                UnableRUpdateCounter.store(0,std::memory_order_release);
+                bool back = GetCurrentBackbuf();
+                SetFrontbuf(back);
+                SetBackbuf(!back);
+                BackbufModified.store(false,std::memory_order_release);
+                W_SetLockState(false);
+                R_SetLockState(false);
+            }
         }
 
         if (((W_GetOpenTickets() >= MaxWTicketsDifference) || (UnableRUpdateCounter.load(std::memory_order_acquire) >= MaxRUnableUpdate)) && !R_OrderedInWB.load(std::memory_order_acquire) && BackbufModified.load(std::memory_order_acquire)) {
-            R_SetLockState(true);
-            while (R_GetOpenTickets() != 1) {}
-            if (!R_OrderedInWB.load(std::memory_order_acquire)) {
-                R_OrderedInW = W_Order(false);
-                R_OrderedInWB.store(true,std::memory_order_release);
+            if (R_SetLockState(true)) {
+                while (R_GetOpenTickets() != 1) {}
+                if (!R_OrderedInWB.load(std::memory_order_acquire)) {
+                    R_OrderedInW = W_Order(false);
+                    R_OrderedInWB.store(true,std::memory_order_release);
+                }
+                R_SetLockState(false);
             }
-            R_SetLockState(false);
         }
 
         return frontPtr;
@@ -433,10 +444,10 @@ private:
     NLOpaqueObject* trueBuf1;
     NLOpaqueObject* falseBuf0;
 
-    uint64_t R_OrderedInW = 0;
+    std::atomic<uint64_t> R_OrderedInW = 0;
     alignas(64) std::atomic<bool> R_OrderedInWB = false;
     
-    void R_SetLockState(bool lock);
+    bool R_SetLockState(bool lock);
     uint64_t R_Order();
     uint64_t R_GetOpenTickets();
     void R_Close();
@@ -454,16 +465,16 @@ private:
     alignas(64) std::atomic<uint64_t> W_OrderedTickets = 0;
 }; 
 
-void NLAtomic<NLOpaqueObject>::SetBackbuf(bool buf) {
+inline void NLAtomic<NLOpaqueObject>::SetBackbuf(bool buf) {
     CurrentBackbuf.store(buf,std::memory_order_release);
 	if (buf) backPtr = &trueBuf1;
 	else backPtr = &falseBuf0;
 }
-void NLAtomic<NLOpaqueObject>::SetFrontbuf(bool buf) {
+inline void NLAtomic<NLOpaqueObject>::SetFrontbuf(bool buf) {
 	if (buf) frontPtr = &trueBuf1;
 	else frontPtr = &falseBuf0;
 }
-void NLAtomic<NLOpaqueObject>::CopyTo(bool buf) { 
+inline void NLAtomic<NLOpaqueObject>::CopyTo(bool buf) { 
 	if (buf) {
         trueBuf1->Delete();
         trueBuf1 = nullptr;
@@ -475,22 +486,22 @@ void NLAtomic<NLOpaqueObject>::CopyTo(bool buf) {
         falseBuf0 = trueBuf1->Copy();
     }
 }
-bool NLAtomic<NLOpaqueObject>::GetCurrentBackbuf() {
+inline bool NLAtomic<NLOpaqueObject>::GetCurrentBackbuf() {
     return CurrentBackbuf.load(std::memory_order_acquire);
 }
-uint64_t NLAtomic<NLOpaqueObject>::R_Order() {
+inline uint64_t NLAtomic<NLOpaqueObject>::R_Order() {
     while (R_Lock.load(std::memory_order_acquire)) {}
     return R_OrderedTickets.fetch_add(1, std::memory_order_acquire);
 }
-uint64_t NLAtomic<NLOpaqueObject>::R_GetOpenTickets() {
+inline uint64_t NLAtomic<NLOpaqueObject>::R_GetOpenTickets() {
     uint64_t ordered = R_OrderedTickets.load(std::memory_order_acquire);
     uint64_t current = R_CurrentTicket.load(std::memory_order_acquire);
     return ordered - current;
 }
-void NLAtomic<NLOpaqueObject>::R_Close() {
+inline void NLAtomic<NLOpaqueObject>::R_Close() {
     R_CurrentTicket.fetch_add(1, std::memory_order_release);
 }
-uint64_t NLAtomic<NLOpaqueObject>::W_Order(bool wait) {
+inline uint64_t NLAtomic<NLOpaqueObject>::W_Order(bool wait) {
     while (W_Lock.load(std::memory_order_acquire)) {}
 	if (wait) {
 		uint64_t ot = W_OrderedTickets.fetch_add(1, std::memory_order_acquire);
@@ -501,18 +512,30 @@ uint64_t NLAtomic<NLOpaqueObject>::W_Order(bool wait) {
 	    return W_OrderedTickets.fetch_add(1, std::memory_order_acquire);
 	}
 }
-uint64_t NLAtomic<NLOpaqueObject>::W_GetOpenTickets() {
+inline uint64_t NLAtomic<NLOpaqueObject>::W_GetOpenTickets() {
     uint64_t ordered = W_OrderedTickets.load(std::memory_order_acquire);
     uint64_t current = W_CurrentTicket.load(std::memory_order_acquire);
     return ordered - current;
 }
-bool NLAtomic<NLOpaqueObject>::W_GetState(uint64_t ticket) {
+inline bool NLAtomic<NLOpaqueObject>::W_GetState(uint64_t ticket) {
     return ticket == W_CurrentTicket.load(std::memory_order_acquire);
 }
-void NLAtomic<NLOpaqueObject>::W_Close() {
+inline void NLAtomic<NLOpaqueObject>::W_Close() {
     W_CurrentTicket.fetch_add(1, std::memory_order_release);
     
 }
+inline void NLAtomic<NLOpaqueObject>::W_SetLockState(bool lock) {
+    W_Lock.store(lock,std::memory_order_release);
+}
+inline bool NLAtomic<NLOpaqueObject>::R_SetLockState(bool lock) {
+    if (lock) {
+        bool expected = false;
+        return R_Lock.compare_exchange_strong(expected, true, std::memory_order_acq_rel, std::memory_order_acquire);
+    }
+    R_Lock.store(false, std::memory_order_release);
+    return true;
+}
+
 
 
 #define NLAtomicOpaque NLAtomic<NLOpaqueObject>
