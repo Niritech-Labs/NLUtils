@@ -7,7 +7,7 @@
 #include "PathUtils.hpp"
 #include <memory>
 #include <functional>
-#include "../../../libs/nlohmann/json.hpp"
+#include <json.hpp>
 #include <pugixml.hpp>
 #include "../Logger.hpp"
 

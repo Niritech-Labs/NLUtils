@@ -14,7 +14,7 @@ target_include_directories(NLUtils PUBLIC
 )
 
 target_link_libraries(NLUtils PUBLIC
-    replxx
+    $<BUILD_INTERFACE:replxx>
 )
 
 ###########################################################################################################
@@ -31,12 +31,15 @@ add_subdirectory(libs/pugixml ${CMAKE_CURRENT_BINARY_DIR}/pugixml_build EXCLUDE_
 target_include_directories(NLUtils-EnderIO PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/pugixml/src>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/NLUtils/pugixml>
+
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/nlohmann/>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/NLUtils/nlohmann>
 )
 
 target_link_libraries(NLUtils-EnderIO PUBLIC
-    glm::glm
+    $<BUILD_INTERFACE:glm::glm>
     NLUtils
-    pugixml
+    $<BUILD_INTERFACE:pugixml>
 )
 
 
@@ -80,14 +83,14 @@ target_include_directories(NLUtils-Extra PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/NLUtils/glad>
 ) 
 
-target_link_libraries(NLUtils-Extra PRIVATE
-    glm::glm
+target_link_libraries(NLUtils-Extra PUBLIC
     NLUtils
     NLUtils-EnderIO
-    Nuklear
-    glad
+    $<BUILD_INTERFACE:Nuklear>
 )
-
+target_link_libraries(NLUtils-Extra PRIVATE
+    $<BUILD_INTERFACE:glad>
+)
 ########################################################################################################
 
 add_library(NLUtils-NLGToolkit SHARED
@@ -145,14 +148,11 @@ target_include_directories(NLUtils-NLGToolkit PUBLIC
 ) 
 
 target_link_libraries(NLUtils-NLGToolkit PUBLIC
-    glm::glm
-    NLUtils
     NLUtils-Extra
-    Nuklear
-    glfw
+    $<BUILD_INTERFACE:glfw>
 )
 target_link_libraries(NLUtils-NLGToolkit PRIVATE
-    glad
+    $<BUILD_INTERFACE:glad>
 )
 
 ###########################################################################################################
@@ -161,7 +161,7 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 
-foreach(tgt NLUtils NLUtils-Extra NLUtils-NLGToolkit)
+foreach(tgt NLUtils NLUtils-Extra NLUtils-NLGToolkit NLUtils-EnderIO)
     set_target_properties(${tgt} PROPERTIES
         VERSION   ${PROJECT_VERSION}
         SOVERSION ${PROJECT_VERSION_MAJOR}
@@ -171,7 +171,7 @@ foreach(tgt NLUtils NLUtils-Extra NLUtils-NLGToolkit)
     )
 endforeach()
 
-install(TARGETS NLUtils NLUtils-Extra NLUtils-NLGToolkit
+install(TARGETS NLUtils NLUtils-Extra NLUtils-NLGToolkit NLUtils-EnderIO
     EXPORT      NLUtilsTargets
     LIBRARY     DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE     DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -220,6 +220,10 @@ install(DIRECTORY libs/nuklear/
 
 install(DIRECTORY libs/glfw-nor/include/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/NLUtils/glfw
+)
+
+install(DIRECTORY libs/nlohmann/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/NLUtils/nlohmann
 )
 
 

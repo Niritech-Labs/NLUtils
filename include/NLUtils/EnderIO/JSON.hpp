@@ -3,7 +3,7 @@
 #include <string>
 #include <optional>
 #include "IO.hpp"
-#include "../../../libs/nlohmann/json.hpp"
+#include <json.hpp>
 #include "../Logger.hpp"
 
 class Nlohman_JSONParser : EnderIO::ParserRealization {

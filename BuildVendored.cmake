@@ -35,8 +35,8 @@ if(NLUTILS_REPLXX_INCLUDE_DIR STREQUAL "internal")
 else()
     target_include_directories(NLUtils PUBLIC
         ${NLUTILS_REPLXX_INCLUDE_DIR}
-        message(STATUS "Current replxx include dir: ${NLUTILS_REPLXX_INCLUDE_DIR}")
     )
+    message(STATUS "Current replxx include dir: ${NLUTILS_REPLXX_INCLUDE_DIR}")
 endif()
 
 
@@ -61,6 +61,19 @@ else()
         ${NLUTILS_PUGIXML_INCLUDE_DIR}
     )
 endif()
+
+if(NLUTILS_GLM_INCLUDE_DIR STREQUAL "internal")
+    add_subdirectory(libs/glm-1.0.3/glm ${CMAKE_CURRENT_BINARY_DIR}/glm_build)
+    target_include_directories(NLUtils-EnderIO PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glm-1.0.3/glm) 
+else()
+    target_include_directories(NLUtils-EnderIO PUBLIC ${NLUTILS_GLM_INCLUDE_DIR}) 
+    message(STATUS "Current GLM include dir: ${NLUTILS_GLM_INCLUDE_DIR}")
+endif()
+
+
+target_include_directories(NLUtils-EnderIO PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/nlohmann
+)
 
 
 target_link_libraries(NLUtils-EnderIO PUBLIC
@@ -91,13 +104,6 @@ if(BUILD_NLUTILS_ENDER_IO)
         message(STATUS "Current GLAD include dir: ${NLUTILS_GLAD_INCLUDE_DIR}") 
     endif()
 
-    if(NLUTILS_GLM_INCLUDE_DIR STREQUAL "internal")
-        add_subdirectory(libs/glm-1.0.3/glm ${CMAKE_CURRENT_BINARY_DIR}/glm_build)
-        target_include_directories(NLUtils-Extra PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/libs/glm-1.0.3/glm) 
-    else()
-        target_include_directories(NLUtils-Extra PUBLIC ${NLUTILS_GLM_INCLUDE_DIR}) 
-        message(STATUS "Current GLM include dir: ${NLUTILS_GLM_INCLUDE_DIR}")
-    endif()
 
     if(NLUTILS_NUKLEAR_INCLUDE_DIR STREQUAL "internal")
         add_library(Nuklear ${CMAKE_CURRENT_SOURCE_DIR}/libs/nuklear/Nuklear.c)
@@ -122,13 +128,15 @@ if(BUILD_NLUTILS_ENDER_IO)
     endif()
 
 
-    target_link_libraries(NLUtils-Extra PRIVATE
-        glm::glm
+    target_link_libraries(NLUtils-Extra PUBLIC
         NLUtils
         Nuklear
         NLUtils-EnderIO
+    )
+    target_link_libraries(NLUtils-Extra PRIVATE
         glad
     )
+
 else()
     message(FATAL_ERROR "Invalid configuration") 
 endif()
@@ -205,14 +213,12 @@ if(BUILD_NLUTILS_NLGTOOLKIT)
         message(STATUS "Current PUGIXML include dir: ${NLUTILS_GLFW_INCLUDE_DIR}") 
     endif()
 
-    target_link_libraries(NLUtils-NLGToolkit PRIVATE
-        glm::glm
-        NLUtils
+    target_link_libraries(NLUtils-NLGToolkit PUBLIC
         NLUtils-Extra
-        NLUtils-EnderIO
-        Nuklear
-        glad
         glfw
+    )
+    target_link_libraries(NLUtils-NLGToolkit PRIVATE
+        glad
     )
     else()
     message(FATAL_ERROR "Invalid configuration") 
