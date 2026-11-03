@@ -14,166 +14,349 @@ bool FormatParsers::BlocksParser::Save(Blocks& data) {
 
 
 
+
+void paramIsMeta_Parsers(Block& block, std::string& name, std::string& value, bool& res) {
+    res = false;
+    std::string suffix = "-o-meta";
+    if (name.size() <= suffix.size()) return;
+    if (name.compare(name.size()-suffix.size(), suffix.size(), suffix) != 0) return;
+    std::vector<std::string> metaWords = {"string","int","uint","float","bool","null","array","attribute"};
+    if (nlfval value invector(metaWords)) {
+        std::string partner = name.substr(0, name.size()-suffix.size());
+        if (!block.FindParametr(partner).empty() || !block.FindBlock(partner).empty()) {
+            res = true;
+        }
+    }
+}
+void paramMeta_Parsers(std::vector<std::pair<std::string,std::string>>& params, std::string& name, std::string& meta) {
+    meta = "";
+    std::string target = name+"-o-meta";
+    forel& param inside(params) {
+        if (param.first == target) {
+            meta = param.second;
+            return;
+        }
+    }
+}
+
 //JSON ############################################
+void jsonValue_Parsers(std::string& value, std::string& meta, nlohmann::ordered_json& out) {
+    if (meta == "int") {
+        try {
+            out = std::stoll(value);
+        }
+        catch (...) {
+            out = value;
+        }
+    }
+    else if (meta == "uint") {
+        try {
+            out = std::stoull(value);
+        }
+        catch (...) {
+            out = value;
+        }
+    }
+    else if (meta == "float") {
+        try {
+            out = std::stod(value);
+        }
+        catch (...) {
+            out = value;
+        }
+    }
+    else if (meta == "bool") {
+        out = (value == "true");
+    }
+    else if (meta == "null") {
+        out = nullptr;
+    }
+    else {
+        out = value;
+    }
+}
+void jsonToBlocks_Parsers(nlohmann::ordered_json& j, Block& parent, std::string key, NLLogger* Logger) {
+    if (j.is_object()) {
+        Block child(key);
+        forel item inside(j.items()) {
+            std::string memberKey = item.key();
+            jsonToBlocks_Parsers(item.value(), child, memberKey, Logger);
+        }
+        parent.AddBlock(child);
+        return;
+    }
+    if (j.is_array()) {
+        Block child(key);
+        size_t i = 0;
+        forel item inside(j) {
+            jsonToBlocks_Parsers(item, child, std::to_string(i), Logger);
+            i++;
+        }
+        parent.AddBlock(child);
+        std::string metaName = key+"-o-meta";
+        if (parent.FindParametr(metaName).empty()) {
+            std::pair<std::string,std::string> meta = {metaName, "array"};
+            parent.AddParam(meta);
+        }
+        else {
+            Logger->Warning("Meta name taken, array meta skipped: "+metaName);
+        }
+        return;
+    }
+    std::pair<std::string,std::string> param = {key, ""};
+    std::string metaWord = "";
+    if (j.is_string()) {
+        param.second = j.get<std::string>();
+    }
+    else if (j.is_boolean()) {
+        param.second = j.dump();
+        metaWord = "bool";
+    }
+    else if (j.is_number_float()) {
+        param.second = j.dump();
+        metaWord = "float";
+    }
+    else if (j.is_number_unsigned()) {
+        param.second = j.dump();
+        metaWord = "uint";
+    }
+    else if (j.is_number_integer()) {
+        param.second = j.dump();
+        metaWord = "int";
+    }
+    else if (j.is_null()) {
+        metaWord = "null";
+    }
+    parent.AddParam(param);
+    if (!metaWord.empty()) {
+        std::string metaName = key+"-o-meta";
+        if (parent.FindParametr(metaName).empty()) {
+            std::pair<std::string,std::string> meta = {metaName, metaWord};
+            parent.AddParam(meta);
+        }
+        else {
+            Logger->Warning("Meta name taken, meta skipped: "+metaName);
+        }
+    }
+    bool isMeta = false;
+    paramIsMeta_Parsers(parent, param.first, param.second, isMeta);
+    if (isMeta) {
+        Logger->Warning("Data key conflicts with meta namespace: "+key);
+    }
+}
+void blocksToJson_Parsers(Block& block, nlohmann::ordered_json& out, bool asArray) {
+    if (asArray) {
+        out = nlohmann::ordered_json::array();
+    }
+    else {
+        out = nlohmann::ordered_json::object();
+    }
+    std::vector<std::pair<std::string,std::string>> params = block.GetAllParams();
+    std::vector<Block> children = block.GetAllBlocks();
+
+    if (asArray) {
+        //params and child blocks merged by numeric index, entries without a number go last
+        std::vector<std::string> names;
+        std::vector<bool> isBlk;
+        std::vector<size_t> orig;
+        size_t i = 0;
+        forel& param inside(params) {
+            bool isMeta = false;
+            paramIsMeta_Parsers(block, param.first, param.second, isMeta);
+            if (!isMeta) {
+                names.push_back(param.first);
+                isBlk.push_back(false);
+                orig.push_back(i);
+            }
+            i++;
+        }
+        i = 0;
+        forel& child inside(children) {
+            names.push_back(child.GetName());
+            isBlk.push_back(true);
+            orig.push_back(i);
+            i++;
+        }
+        std::vector<uint64_t> nums(names.size(), UINT64_MAX);
+        size_t k = 0;
+        forel& nm inside(names) {
+            try {
+                nums[k] = std::stoull(nm);
+            }
+            catch (...) {
+            }
+            k++;
+        }
+        std::vector<bool> used(names.size(), false);
+        size_t count = names.size();
+        for (size_t a = 0; a < count; a++) {
+            size_t best = count;
+            for (size_t b = 0; b < count; b++) {
+                if (used[b]) continue;
+                if (best == count || nums[b] < nums[best]) best = b;
+            }
+            used[best] = true;
+            size_t e = best;
+            if (isBlk[e]) {
+                std::string elName = names[e];
+                std::string meta = "";
+                paramMeta_Parsers(params, elName, meta);
+                nlohmann::ordered_json element;
+                blocksToJson_Parsers(children[orig[e]], element, meta == "array");
+                out.push_back(element);
+            }
+            else {
+                std::pair<std::string,std::string>& param = params[orig[e]];
+                std::string meta = "";
+                paramMeta_Parsers(params, param.first, meta);
+                nlohmann::ordered_json element;
+                jsonValue_Parsers(param.second, meta, element);
+                out.push_back(element);
+            }
+        }
+        return;
+    }
+
+    forel& param inside(params) {
+        bool isMeta = false;
+        paramIsMeta_Parsers(block, param.first, param.second, isMeta);
+        if (isMeta) continue;
+        std::string meta = "";
+        paramMeta_Parsers(params, param.first, meta);
+        nlohmann::ordered_json value;
+        jsonValue_Parsers(param.second, meta, value);
+        if (out.find(param.first) != out.end()) {
+            nlohmann::ordered_json prev = out[param.first];
+            if (!prev.is_array()) {
+                nlohmann::ordered_json arr = nlohmann::ordered_json::array();
+                arr.push_back(prev);
+                prev = arr;
+            }
+            prev.push_back(value);
+            out[param.first] = prev;
+        }
+        else {
+            out[param.first] = value;
+        }
+    }
+    forel& child inside(children) {
+        std::string childName = child.GetName();
+        std::string meta = "";
+        paramMeta_Parsers(params, childName, meta);
+        nlohmann::ordered_json value;
+        blocksToJson_Parsers(child, value, meta == "array");
+        if (out.find(child.GetName()) != out.end()) {
+            nlohmann::ordered_json prev = out[child.GetName()];
+            if (!prev.is_array()) {
+                nlohmann::ordered_json arr = nlohmann::ordered_json::array();
+                arr.push_back(prev);
+                prev = arr;
+            }
+            prev.push_back(value);
+            out[child.GetName()] = prev;
+        }
+        else {
+            out[child.GetName()] = value;
+        }
+    }
+}
 FormatParsers::JSONParser::JSONParser() {
     conversionAllowed = {"JSON","XML","INI"};
 }
 PARSER_REALIZATION_COPY(FormatParsers::JSONParser) 
-bool parseIndexSuffix_Parsers(const std::string& name, std::size_t& index) {
-    if (name.size() < 3 || name.back() != ']') return false;
-
-    const std::size_t open = name.find_last_of('[');
-    if (open == std::string::npos) return false;
-
-    const std::string digits = name.substr(open + 1, name.size() - open - 2);
-    if (digits.empty() || digits.find_first_not_of("0123456789") != std::string::npos) return false;
-
-    index = static_cast<std::size_t>(std::stoull(digits));
-    return true;
-}
-nlohmann::json FormatParsers::JSONParser::stringToJsObj(std::string& value) {
-    if (value == "null")  return nlohmann::json(nullptr);
-    if (value == "true")  return nlohmann::json(true);
-    if (value == "false") return nlohmann::json(false);
-
-    char first = value.empty() ? '\0' : value.front();
-    bool looksNumeric = (first >= '0' && first <= '9') || first == '-' || first == '+' || first == '.';
-
-    if (looksNumeric) {
-        std::size_t pos = 0;
-        try { long long i = std::stoll(value, &pos); if (pos == value.size()) return nlohmann::json(i); } catch (...) {}
-        try { double d = std::stod(value, &pos); if (pos == value.size()) return nlohmann::json(d); } catch (...) {}
-    }
-
-    return nlohmann::json(value);
-}
-nlohmann::json FormatParsers::JSONParser::blockToJs(Block& block) {
-    std::vector<std::pair<std::string, std::string>> params = block.GetAllParams();
-    std::vector<Block> children = block.GetAllBlocks();
-
-    struct Entry { 
-        std::size_t index; 
-        bool isBlock; 
-        std::size_t src; 
-    };
-    std::vector<Entry> entries;
-    bool isArray = !params.empty() || !children.empty();
-
-    for (std::size_t i = 0; isArray && i < params.size(); ++i) {
-        std::size_t idx = 0;
-
-        if (parseIndexSuffix_Parsers(params[i].first, idx)) entries.push_back({idx, false, i});
-        else isArray = false;
-    }
-    for (std::size_t i = 0; isArray && i < children.size(); ++i) {
-        std::size_t idx = 0;
-
-        if (parseIndexSuffix_Parsers(children[i].GetName(), idx)) entries.push_back({idx, true, i});
-        else isArray = false;
-    }
-
-    if (isArray) {
-        std::sort(entries.begin(), entries.end(),
-        [](Entry& a,Entry& b) { 
-            return a.index < b.index; 
-        });
-        for (std::size_t k = 0; isArray && k < entries.size(); ++k) {
-            if (entries[k].index != k) isArray = false;
-        }
-    }
-
-    if (isArray) {
-        nlohmann::json arr = nlohmann::json::array();
-        for (Entry& e : entries) {
-            if (e.isBlock)
-                arr.push_back(blockToJs(children[e.src]));
-            else
-                arr.push_back(stringToJsObj(params[e.src].second));
-        }
-        return arr;
-    }
-
-    nlohmann::json obj = nlohmann::json::object();
-    for (auto& p : params)
-        obj[p.first] = stringToJsObj(p.second);
-    for (auto& c : children)
-        obj[c.GetName()] = blockToJs(c);
-
-    return obj;
-}
-std::string FormatParsers::JSONParser::jsObjToString(nlohmann::json& value) {
-    return value.is_string() ? value.get<std::string>() : value.dump();
-}
-Block FormatParsers::JSONParser::toBlock(std::string name,nlohmann::json& value) {
-    Block block(name);
-
-    if (value.is_object()) {
-        for (auto it = value.begin(); it != value.end(); ++it) {
-            nlohmann::json& v = it.value();
-
-            if (v.is_object() || v.is_array()) {
-                Block child = toBlock(it.key(), v);
-                block.AddBlock(child);
-            } 
-            else {
-                std::pair<std::string, std::string> param{it.key(), jsObjToString(v)};
-                block.AddParam(param);
-            }
-        }
-    }
-    else if (value.is_array()) {
-        for (std::size_t i = 0; i < value.size(); ++i) {
-            nlohmann::json& v = value[i];
-            std::string elementName = name + '[' + std::to_string(i) + ']';
-
-            if (v.is_object() || v.is_array()) {
-                Block child = toBlock(elementName, v);
-                block.AddBlock(child);
-            } 
-            else {
-                std::pair<std::string, std::string> param{elementName, jsObjToString(v)};
-                block.AddParam(param);
-            }
-        }
-    }
-
-    return block;
-}
-
-
 bool FormatParsers::JSONParser::Save(Blocks& data) {
-    nlohmann::json jdata = blockToJs(data);
     if (nlfval data.GetName() invector(conversionAllowed)) {
-        return write(jdata.dump(4, ' ', false, nlohmann::json::error_handler_t::replace));
+        std::string rootname = data.GetName();
+        std::vector<std::pair<std::string,std::string>> rootParams = data.GetAllParams();
+        std::string rootMeta = "";
+        paramMeta_Parsers(rootParams, rootname, rootMeta);
+        nlohmann::ordered_json jdata;
+
+        if (!rootMeta.empty()) {
+            bool hasRootParam = false;
+            forel& rp inside(rootParams) {
+                if (rp.first == rootname) {
+                    hasRootParam = true;
+                }
+            }
+            auto found = data.FindBlock(rootname);
+            if (!hasRootParam && !found.empty()) {
+                Block* wrapped = found[found.size()-1];
+                if (rootMeta == "array") {
+                    blocksToJson_Parsers(*wrapped, jdata, true);
+                }
+                else {
+                    std::vector<std::pair<std::string,std::string>> wparams = wrapped->GetAllParams();
+                    std::string wvalue = "";
+                    forel& wp inside(wparams) {
+                        if (wp.first == rootname) {
+                            wvalue = wp.second;
+                        }
+                    }
+                    std::string wmeta = "";
+                    paramMeta_Parsers(wparams, rootname, wmeta);
+                    jsonValue_Parsers(wvalue, wmeta, jdata);
+                }
+            }
+            else {
+                if (!hasRootParam) {
+                    Logger->Warning("Root meta without root block: "+rootname, filepath);
+                }
+                blocksToJson_Parsers(data, jdata, false);
+            }
+        }
+        else {
+            blocksToJson_Parsers(data, jdata, false);
+        }
+        return write(jdata.dump(4, ' ', false, nlohmann::ordered_json::error_handler_t::replace));
     }
     else {
         if (Logger) Logger->Warning("Conversion not allowed",filepath);
     }
     return false;
-    
 }
 Blocks FormatParsers::JSONParser::Load() {
-    nlohmann::json data = nlohmann::json::parse(read());
     Blocks root("JSON");
-
-    if (data.is_discarded()) 
+    nlohmann::ordered_json data;
+    try {
+        data = nlohmann::ordered_json::parse(read());
+    }
+    catch (...) {
+        Logger->Warning("Invalid JSON in "+filepath.string(),filepath);
         return root;
+    }
 
     if (data.is_object()) {
-        for (auto it = data.begin(); it != data.end(); ++it) {
-            Block child = toBlock(it.key(), it.value());
-            root.AddBlock(child);
+        forel item inside(data.items()) {
+            std::string key = item.key();
+            jsonToBlocks_Parsers(item.value(), root, key, Logger);
         }
     }
     else if (data.is_array()) {
-        for (std::size_t i = 0; i < data.size(); ++i) {
-            Block child = toBlock("item[" + std::to_string(i) + ']', data[i]);
-            root.AddBlock(child);
+        Block child(root.GetName());
+        size_t i = 0;
+        forel item inside(data) {
+            jsonToBlocks_Parsers(item, child, std::to_string(i), Logger);
+            i++;
         }
+        root.AddBlock(child);
+        std::pair<std::string,std::string> meta = {root.GetName()+"-o-meta", "array"};
+        root.AddParam(meta);
     }
-    else if (!data.is_null()) {
-        std::pair<std::string, std::string> param{"value", jsObjToString(data)};
-        root.AddParam(param);
+    else {
+        Block child(root.GetName());
+        jsonToBlocks_Parsers(data, child, root.GetName(), Logger);
+        if (data.is_string()) {
+            std::pair<std::string,std::string> meta = {root.GetName()+"-o-meta", "string"};
+            child.AddParam(meta);
+        }
+        root.AddBlock(child);
+        std::string rootname = root.GetName();
+        std::vector<std::pair<std::string,std::string>> cparams = child.GetAllParams();
+        std::string rootWord = "";
+        paramMeta_Parsers(cparams, rootname, rootWord);
+        std::pair<std::string,std::string> rmeta = {rootname+"-o-meta", rootWord};
+        root.AddParam(rmeta);
     }
 
     return root;
@@ -182,122 +365,160 @@ Blocks FormatParsers::JSONParser::Load() {
 
 
 //XML ############################################
-FormatParsers::XMLParser::XMLParser() {
-    conversionAllowed = {"JSON","XML","INI"};
-}
-PARSER_REALIZATION_COPY(FormatParsers::XMLParser) 
-std::string stripIndexSuffix(const std::string& name) {
-    std::string base = name;
-    std::size_t index = 0;
-    while (parseIndexSuffix_Parsers(base, index))
-        base = base.substr(0, base.find_last_of('['));
-    return base;
-}
-void FormatParsers::XMLParser::toBlock(pugi::xml_node node, std::string name, Block& parent) {
-    const bool hasAttrs = (node.first_attribute() != nullptr);
-
-    bool hasElems = false;
-    for (pugi::xml_node c = node.first_child(); c; c = c.next_sibling()) {
-        if (c.type() == pugi::node_element) {
-            hasElems = true;
+void xmlElementToBlocks_Parsers(pugi::xml_node element, Block& parent, bool forceBlock, NLLogger* Logger) {
+    bool asBlock = forceBlock;
+    if (!asBlock) {
+        forel attr inside(element.attributes()) {
+            asBlock = true;
             break;
         }
     }
-
-    std::string text = node.text().as_string();
-    NLTextUtils::StripIn(text);
-
-
-    if (!hasAttrs && !hasElems && !text.empty()) {
-        std::pair<std::string, std::string> param{name, text};
+    if (!asBlock) {
+        forel child inside(element.children()) {
+            if (child.type() == pugi::node_element) {
+                asBlock = true;
+                break;
+            }
+        }
+    }
+    if (!asBlock) {
+        std::string text = "";
+        forel child inside(element.children()) {
+            if (child.type() == pugi::node_pcdata || child.type() == pugi::node_cdata) {
+                text += child.value();
+            }
+        }
+        std::pair<std::string,std::string> param = {element.name(), text};
         parent.AddParam(param);
         return;
     }
 
-    Block block(name);
-
-    for (pugi::xml_attribute a = node.first_attribute(); a; a = a.next_attribute()) {
-        std::pair<std::string, std::string> param{a.name(), a.value()};
-        block.AddParam(param);
+    Block childBlock(element.name());
+    forel attr inside(element.attributes()) {
+        std::pair<std::string,std::string> param = {attr.name(), attr.value()};
+        childBlock.AddParam(param);
+        std::pair<std::string,std::string> meta = {std::string(attr.name())+"-o-meta", "attribute"};
+        childBlock.AddParam(meta);
     }
-
-    if (!text.empty()) { 
-        std::pair<std::string, std::string> textParam{"#text", text};
-        block.AddParam(textParam);
-    }
-
-    std::unordered_map<std::string, std::size_t> tagCount, tagIndex;
-
-    for (pugi::xml_node c = node.first_child(); c; c = c.next_sibling())
-        if (c.type() == pugi::node_element)
-            ++tagCount[c.name()];
-
-    for (pugi::xml_node c = node.first_child(); c; c = c.next_sibling()) {
-        if (c.type() != pugi::node_element) continue; 
-        const std::string tag = c.name();
-
-        if (tagCount[tag] > 1) toBlock(c, tag + '[' + std::to_string(tagIndex[tag]++) + ']', block);
-        else toBlock(c, tag, block);
-    }
-
-    parent.AddBlock(block);
-}
-void FormatParsers::XMLParser::toNode(Block& block, pugi::xml_node parent) {
-    pugi::xml_node node = parent.append_child(stripIndexSuffix(block.GetName()).c_str());
-
-    std::size_t idx = 0;
-    for (auto& p : block.GetAllParams()) {
-        if (p.first == "#text") {
-            node.text().set(p.second.c_str());
+    std::string text = "";
+    bool hasText = false;
+    bool hasElements = false;
+    forel child inside(element.children()) {
+        if (child.type() == pugi::node_pcdata || child.type() == pugi::node_cdata) {
+            text += child.value();
+            hasText = true;
         }
-        else if (parseIndexSuffix_Parsers(p.first, idx)) {
-            node.append_child(stripIndexSuffix(p.first).c_str()).text().set(p.second.c_str());
+        else if (child.type() == pugi::node_element) {
+            hasElements = true;
+            xmlElementToBlocks_Parsers(child, childBlock, false, Logger);
+        }
+    }
+    if (hasText) {
+        if (hasElements) {
+            Logger->Warning("Mixed content in <"+std::string(element.name())+">: text order not preserved");
+        }
+        std::pair<std::string,std::string> param = {"#text", text};
+        childBlock.AddParam(param);
+    }
+    parent.AddBlock(childBlock);
+}
+void blocksToXml_Parsers(Block& block, pugi::xml_node element, NLLogger* Logger) {
+    std::vector<std::pair<std::string,std::string>> params = block.GetAllParams();
+    std::vector<Block> children = block.GetAllBlocks();
+
+    std::string text = "";
+    forel& param inside(params) {
+        bool isMeta = false;
+        paramIsMeta_Parsers(block, param.first, param.second, isMeta);
+        if (isMeta) continue;
+        if (param.first == "#text") {
+            text += param.second;
+            continue;
+        }
+        std::string meta = "";
+        paramMeta_Parsers(params, param.first, meta);
+        if (meta == "attribute") {
+            element.append_attribute(param.first.c_str()).set_value(param.second.c_str());
         }
         else {
-            node.append_attribute(p.first.c_str()) = p.second.c_str();
+            if (param.first.empty() || !(std::isalpha((unsigned char)param.first[0]) || param.first[0] == '_')) {
+                Logger->Warning("Name skipped in XML: "+param.first);
+                continue;
+            }
+            pugi::xml_node child = element.append_child(param.first.c_str());
+            if (!param.second.empty()) {
+                child.append_child(pugi::node_pcdata).set_value(param.second.c_str());
+            }
         }
     }
-
-    for (Block& c : block.GetAllBlocks())
-        toNode(c, node);
+    if (!text.empty()) {
+        element.append_child(pugi::node_pcdata).set_value(text.c_str());
+    }
+    forel& child inside(children) {
+        std::string elName = child.GetName();
+        if (elName.empty() || !(std::isalpha((unsigned char)elName[0]) || elName[0] == '_')) {
+            Logger->Warning("Block name skipped in XML: "+elName);
+            continue;
+        }
+        pugi::xml_node childElement = element.append_child(elName.c_str());
+        blocksToXml_Parsers(child, childElement, Logger);
+    }
 }
-
-
+FormatParsers::XMLParser::XMLParser() {
+    conversionAllowed = {"XML","INI"};
+}
+PARSER_REALIZATION_COPY(FormatParsers::XMLParser) 
 Blocks FormatParsers::XMLParser::Load() {
+    Blocks root("XML");
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_file(filepath.c_str());
-    Blocks root("XML");
+    if (!result) {
+        Logger->Warning("Invalid XML: "+std::string(result.description()), filepath);
+        return root;
+    }
 
-    if (!result) return root;
-
-    
-    for (pugi::xml_node c = doc.first_child(); c; c = c.next_sibling()) {
-        if (c.type() == pugi::node_element) {
-            toBlock(c, c.name(), root);
-            break;
+    bool foundRoot = false;
+    forel node inside(doc.children()) {
+        if (node.type() == pugi::node_element) {
+            if (foundRoot) {
+                Logger->Warning("Multiple root elements, extra skipped: "+std::string(node.name()), filepath);
+                continue;
+            }
+            xmlElementToBlocks_Parsers(node, root, true, Logger);
+            foundRoot = true;
         }
     }
 
     return root;
 }
 bool FormatParsers::XMLParser::Save(Blocks& data) {
-    pugi::xml_document doc;
-
-    std::vector<Block> children = data.GetAllBlocks();
-
-    
-    if (children.size() == 1) {
-        toNode(children[0], doc);
-    }
-    else if (!children.empty()) {
-        pugi::xml_node wrapper = doc.append_child("root"); 
-        for (Block& c : children) toNode(c, wrapper);
-    }
     if (nlfval data.GetName() invector(conversionAllowed)) {
+        pugi::xml_document doc;
+        std::vector<Block> children = data.GetAllBlocks();
+        std::vector<std::pair<std::string,std::string>> rootParams = data.GetAllParams();
+
+        pugi::xml_node rootElement;
+        if (rootParams.empty() && children.size() == 1) {
+            std::string elName = children[0].GetName();
+            if (elName.empty() || !(std::isalpha((unsigned char)elName[0]) || elName[0] == '_')) {
+                Logger->Warning("Block name skipped in XML: "+elName, filepath);
+                elName = data.GetName();
+            }
+            rootElement = doc.append_child(elName.c_str());
+            blocksToXml_Parsers(children[0], rootElement, Logger);
+        }
+        else {
+            rootElement = doc.append_child(data.GetName().c_str());
+            blocksToXml_Parsers(data, rootElement, Logger);
+        }
         return doc.save_file(filepath.c_str(), "  ");
+    }
+    else {
+        if (Logger) Logger->Warning("Conversion not allowed",filepath);
     }
     return false;
 }
+
 
 
 //INI ############################################

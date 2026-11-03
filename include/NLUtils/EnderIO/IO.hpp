@@ -80,10 +80,6 @@ namespace FormatParsers {
         bool Save(Blocks& data) override;
     private:
         std::shared_ptr<ParserRealization> Copy() override;
-        std::string jsObjToString(nlohmann::json& value);
-        nlohmann::json blockToJs(Block& block);
-        Block toBlock(std::string name, nlohmann::json& value);
-        nlohmann::json stringToJsObj(std::string& value);
     };
 
     class XMLParser : public ParserRealization{
@@ -93,8 +89,6 @@ namespace FormatParsers {
         bool Save(Blocks& data) override;
     private:
         std::shared_ptr<ParserRealization> Copy() override;
-        void toBlock(pugi::xml_node node, std::string name, Block& parent);
-        void toNode(Block& block, pugi::xml_node parent);
     };
 
     class INIParser : public ParserRealization{
