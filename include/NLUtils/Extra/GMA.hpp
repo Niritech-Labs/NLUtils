@@ -4,7 +4,8 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <glad.h> 
+#include <glad.h>
+
 
 struct Skeleton {
     std::vector<std::string> jointNames;
@@ -100,57 +101,65 @@ struct Model {
 
 
 struct GLVertexAttribute {
-    GLuint location;      
-    GLint size;          
-    GLenum type;         
+    GLuint location;
+    GLint size;
+    GLenum type;
     GLboolean normalized;
-    GLsizei stride;       
-    GLsizei offset;      
+    GLsizei stride;
+    GLsizei offset;
 };
 
-
 struct GLMaterial {
-    // Текстуры
     GLuint diffuseMap = 0;
     GLuint normalMap = 0;
     GLuint specularMap = 0;
     GLuint emissiveMap = 0;
-    glm::vec4 baseColor = glm::vec4(1.0f);
+
+    GLuint64 diffuseHandle = 0;
+    GLuint64 normalHandle = 0;
+    GLuint64 specularHandle = 0;
+    GLuint64 emissiveHandle = 0;
+
+    glm::vec4 baseColor = glm::vec4(1.0f);   
     float roughness = 0.5f;
     float metalness = 0.0f;
     float emissiveIntensity = 0.0f;
-    float opacity = 1.0f;
-    bool translucent = false;
-    GLuint materialUBO = 0; 
+    float opacity = 1.0f;                     
+    float subsurface = 0.0f;                  
+    int translucent = 0;                      
+    int type = 0;                             
+
 };
 
 struct GLSubMesh {
-    GLuint vertexOffset;  
-    GLuint indexOffset; 
-    GLuint indexCount;    
-    GLuint materialIndex;  
-    GLenum primitiveType = GL_TRIANGLES; 
+    GLuint vertexOffset;
+    GLuint indexOffset;
+    GLuint indexCount;
+    GLuint materialIndex;
+    GLenum primitiveType = GL_TRIANGLES;
 };
 
-// Скелет – для скиннинга
 struct GLSkeleton {
-    GLuint jointBuffer = 0;        
+    GLuint jointBuffer = 0;
     GLuint jointCount = 0;
-    GLuint inverseBindBuffer = 0; 
+    GLuint inverseBindBuffer = 0;
 };
 
 
 struct GLModelObject {
-    // Идентификаторы буферов
     GLuint vao = 0;
-    GLuint vbo = 0;           
-    GLuint ibo = 0;           
+    GLuint vbo = 0;
+    GLuint ibo = 0;
     GLuint vertexCount = 0;
     GLuint indexCount = 0;
 
     std::vector<GLVertexAttribute> vertexAttributes;
     std::vector<GLSubMesh> subMeshes;
     std::vector<GLMaterial> materials;
+
+    GLuint materialsSSBO = 0;                
+    GLuint indirectBuffer = 0;                
+
     GLSkeleton skeleton;
     bool hasSkeleton = false;
     GLuint instanceBuffer = 0;
@@ -159,7 +168,6 @@ struct GLModelObject {
     glm::vec3 boundingMin;
     glm::vec3 boundingMax;
 
-    std::unordered_map<std::string, AnimationClip> animations;    
-    std::vector<glm::mat4> jointMatrices;
-    
+    std::unordered_map<std::string, AnimationClip> animations;
+    std::vector<glm::mat4> jointMatrices;   
 };

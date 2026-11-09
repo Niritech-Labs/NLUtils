@@ -84,8 +84,13 @@ public:
             const char* iargs;
 
             auto interface = it->second.Get(AccessModifier::RW);
-                interrupt = interface->fifo.back();
-                interface->fifo.pop_back();
+                if (!interface->fifo.empty()) {
+                    interrupt = interface->fifo.back();
+                    interface->fifo.pop_back();
+                }
+                else {
+                    interrupt = nullptr;
+                }
                 iargs = interface->args;
             it->second.Release(AccessModifier::RW);
 
