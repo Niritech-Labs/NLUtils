@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.30)
-project(NLUtils VERSION 1.5.8 LANGUAGES CXX C)
+project(NLUtils VERSION 1.5.9 LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -28,5 +28,5 @@ if(BUILD_NLUTILS_VENDORED_MODE)
     include(BuildVendored.cmake)
 else()
     include(BuildSystem.cmake)
-endif()
+endif() 
 

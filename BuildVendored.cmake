@@ -25,6 +25,7 @@ add_library(NLUtils
     src/Logger.cpp
     src/Timer.cpp
     src/TextUtils.cpp
+    src/Cmd.cpp
 )
 
 if(NLUTILS_REPLXX_INCLUDE_DIR STREQUAL "internal")

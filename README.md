@@ -4,10 +4,10 @@
 # EN
 ### Niritech Labs Utils is a set of utilities for creating games and graphics applications.
 ## Current Modules
-- Base(NLUtils) - Logger,Text Utilities, Timer, OS Requests, Thread Watchdog.
+- Base(NLUtils) - Logger,Text Utilities, Timer, OS Requests, Thread Watchdog, Command Sessions.
 - EnderIO - Blocks format, Path Utiliti, Parsers JSON Blocks INI XML
-- Extra - AssetLoader
-- NGToolkit - Retaited Mode Toolkit
+- Extra - AssetLoader, Launguage extensions, UI utilities.
+- NGToolkit - Retaited Mode Toolkit.
 
 ## How to Build
 * Base CMakeLists.txt
@@ -66,9 +66,9 @@ cmake --build .
 # RU
 ### Niritech Labs Utils - это набор утилит для создания игр и графических приложений.
 ## Текущие модули
-- Base (NLUtils) — Логгер, утилиты для работы с текстом, таймер, взаимодействие с ОС, контроль потоков (Thread Watchdog).
+- Base (NLUtils) — Логгер, утилиты для работы с текстом, таймер, взаимодействие с ОС, контроль потоков (Thread Watchdog), сессии команд.
 - EnderIO — формат Blocks, класс для работы с путями, парсеры (JSON, Blocks, INI, XML).
-- Extra — загрузчик ресурсов (AssetLoader).
+- Extra — загрузчик ресурсов (AssetLoader), расширения языка, утилиты UI.
 - NGToolkit — инструментарий для построения интерфейсов в режиме сохранения состояния (Retained Mode Toolkit).
 
 ## Как собрать

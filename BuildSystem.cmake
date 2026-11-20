@@ -3,6 +3,7 @@ add_library(NLUtils SHARED
     src/Logger.cpp
     src/Timer.cpp
     src/TextUtils.cpp
+    src/Cmd.сpp
 )
 
 

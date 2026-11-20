@@ -130,6 +130,11 @@ enum State {
     DISABLED
 };
 
+enum OperationState {
+    SUCCES,
+    ERROR
+};
+
 }
 
 namespace std {
