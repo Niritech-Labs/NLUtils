@@ -3,6 +3,7 @@
 #include "../../include/NLUtils/EnderIO/IO.hpp"
 #include <vector>
 #include <memory>
+#include <unordered_set>
 #include <sstream>
 #include "../../include/NLUtils/TextUtils.hpp"
 
@@ -82,6 +83,28 @@ void Block::DeleteAllBlocks() {
 void Block::DeleteAllParams() {
     this->Params.clear();
 }
+bool Block::IsEmpty() {
+    if (this->Params.empty() && this->cBlocks.empty()) return true;
+    return false;
+}
+
+
+std::unordered_map<std::string,std::string> Block::GetParamsAsMap() {
+    std::unordered_map<std::string,std::string> buffer;
+    forel param inside(Params) {
+        buffer[param.first] = param.second;
+    }
+    return buffer;
+}
+bool Block::ParamsIsUnique() {
+    std::unordered_set<std::string_view> seen;
+    seen.reserve(Params.size()); 
+    forel [key, value] inside(Params) {
+        if (!seen.insert(key).second) return false;
+    }
+    return true;
+}
+
 
 std::vector<std::pair<std::string,std::string>> Block::GetAllParams() {
     return this->Params;

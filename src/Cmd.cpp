@@ -11,6 +11,7 @@
     #include <poll.h>
 #endif
 
+using namespace NLSystem;
 
 CommandsSession::~CommandsSession() {
     joinWorker();

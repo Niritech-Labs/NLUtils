@@ -54,7 +54,7 @@ struct InterruptInterface {
 
 class NLInterruptManager {
 public:
-    NL_LOGGER_METHODS
+    NL_LOGGER_METHODS(Logger)
     NLInterruptManager() {
         Logger.Setup(true,"NLInterruptManager");
     }

@@ -54,7 +54,7 @@ public:
 
 class NLParser {
 public:
-    NL_LOGGER_METHODS 
+    NL_LOGGER_METHODS(Logger) 
     void Setup(bool production = true);
     void AddParserRealization(std::string key,std::shared_ptr<ParserRealization> realization);
     std::shared_ptr<ParserRealization> BindParser(std::string key,NLPath::Path filepath);

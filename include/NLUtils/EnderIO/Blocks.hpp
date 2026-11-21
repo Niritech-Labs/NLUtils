@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 #include <cinttypes>
 #include "../Logger.hpp"
 
@@ -26,14 +27,20 @@ public:
     void DeleteAllBlocks();
     void DeleteAllParams();
 
+    //Converts a list of parameters into a map. Warning: In the case of duplicate elements, the list will be trimmed down to unique elements.
     std::vector<std::pair<std::string,std::string>> GetAllParams();
+
+    bool ParamsIsUnique();
     std::vector<Block> GetAllBlocks();
+
+    std::unordered_map<std::string,std::string> GetParamsAsMap();
 
     static void markToDelete(std::pair<std::string,std::string>& param);
     static void markToDelete(Block& block);
 
     std::string GetName();
     std::string toStr();
+    bool IsEmpty();
 
 protected:
     void resetLevel();

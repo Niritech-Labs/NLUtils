@@ -85,7 +85,7 @@ struct AppWindowContext {
 class AppWindow {
 public:
     AppWindowContext* Init(AppWindowConfig config);
-    NL_LOGGER_METHODS_PTR
+    NL_LOGGER_METHODS_PTR(Logger)
     glm::vec2 GetCurrentWinSize();
     bool ShouldClose();
     void BeginFrame();

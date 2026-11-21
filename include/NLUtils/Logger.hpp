@@ -7,33 +7,35 @@
 #include <vector>
 #include <functional>
 
-#define NL_LOGGER_METHODS                               \
+#define NL_LOGGER_METHODS(classWithLogger)              \
     void SetBlacklist(std::vector<std::string> bl) {    \
-        Logger.SetBlacklist(bl);                        \
+        classWithLogger.SetBlacklist(bl);               \
     }                                                   \
     void SetWhitelist(std::vector<std::string> wl) {    \
-        Logger.SetWhitelist(wl);                        \
+        classWithLogger.SetWhitelist(wl);               \
     }                                                   \
     void SetOutCallbacks(NLLogger_OutCallbacks cb) {    \
-        Logger.SetOutCallbacks(cb);                     \
+        classWithLogger.SetOutCallbacks(cb);            \
     }                                                   \
     void UnsetOutCallbacks() {                          \
-        Logger.UnsetOutCallbacks();                     \
+        classWithLogger.UnsetOutCallbacks();            \
     }
 
-#define NL_LOGGER_METHODS_PTR                           \
+#define NL_LOGGER_METHODS_PTR(classWithLogger)          \
     void SetBlacklist(std::vector<std::string> bl) {    \
-        Logger->SetBlacklist(bl);                       \
+        classWithLogger->SetBlacklist(bl);              \
     }                                                   \
     void SetWhitelist(std::vector<std::string> wl) {    \
-        Logger->SetWhitelist(wl);                       \
+        classWithLogger->SetWhitelist(wl);              \
     }                                                   \
     void SetOutCallbacks(NLLogger_OutCallbacks cb) {    \
-        Logger->SetOutCallbacks(cb);                    \
+        classWithLogger->SetOutCallbacks(cb);           \
     }                                                   \
     void UnsetOutCallbacks() {                          \
-        Logger->UnsetOutCallbacks();                    \
+        classWithLogger->UnsetOutCallbacks();           \
     }
+
+
 
 struct NLLogger_OutCallbacks {
    std::function<void(std::string)> Info;

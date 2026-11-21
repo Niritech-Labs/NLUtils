@@ -15,7 +15,7 @@
     #error "this OS is not supported!"
 #endif
 
-
+namespace NLSystem {
 inline uint64_t GetProcessVirtualMemory() {
 #if defined(_WIN32) || defined(_WIN64)
     PROCESS_MEMORY_COUNTERS_EX pmc;
@@ -91,3 +91,4 @@ inline std::filesystem::path GetExecutablePath() {
 }
 
 
+}

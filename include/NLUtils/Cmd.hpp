@@ -17,6 +17,7 @@
     #error "this OS is not supported!"
 #endif
 
+namespace NLSystem {
 class CommandsSession {
 public:
     CommandsSession() = default;
@@ -40,3 +41,5 @@ private:
     std::thread commandHandler;
     int lastExitCode = -1;
 };
+
+}

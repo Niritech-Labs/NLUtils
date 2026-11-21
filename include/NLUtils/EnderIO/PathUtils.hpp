@@ -73,6 +73,11 @@ public:
     bool has_extension() const {return path.has_extension();}
     bool is_absolute() const {return path.is_absolute();}
     bool is_relative() const {return path.is_relative();}
+    bool exists() const {return std::filesystem::exists(path);}
+    bool is_regular_file() const {return std::filesystem::is_regular_file(path);}
+    bool is_directory() const {return std::filesystem::is_directory(path);}
+    bool is_socket() const {return std::filesystem::is_socket(path);}
+    bool is_symlink() const {return std::filesystem::is_symlink(path);}
 
     Path& canonical() {path = std::filesystem::canonical(path); return *this;}
     Path& weakly_canonical() {path = std::filesystem::weakly_canonical(path); return *this;}

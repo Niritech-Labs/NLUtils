@@ -57,7 +57,7 @@ class Widget;
 
 class DrawStack {
 public:
-    NL_LOGGER_METHODS 
+    NL_LOGGER_METHODS(Logger) 
     DrawStack(struct nk_context* nctx);
     void Add(Widget& widget);
     void Delete(Widget& widget);

@@ -162,7 +162,7 @@ public:
     struct nk_image LoadImage(const std::string& path);
     struct nk_nine_slice LoadImageNineSlice(const std::string& path, int left, int top, int right, int bottom);
     void Shutdown();
-    NL_LOGGER_METHODS
+    NL_LOGGER_METHODS(Logger)
 
 private:
     bool GLInit = false;
