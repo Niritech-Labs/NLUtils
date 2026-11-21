@@ -1,5 +1,7 @@
 #include "../include/NLUtils/Cmd.hpp"
 #include <cerrno>
+#include <filesystem>
+
 
 #if defined(_WIN32) || defined(_WIN64)
     #define WIN32_LEAN_AND_MEAN
@@ -154,7 +156,7 @@ void CommandsSession::waitCommand(NL_COMMANDS_PROCESS_HANDLE processHandle) {
 #endif
 
 
-int CommandsSession::Run(const std::vector<std::string>& cmdLine, std::string& out, std::string& err, bool wait) {
+int CommandsSession::Run(const std::vector<std::string>& cmdLine, std::string& out, std::string& err, bool wait,std::string cwd) {
     joinWorker();
 
     out.clear();
@@ -222,6 +224,12 @@ int CommandsSession::Run(const std::vector<std::string>& cmdLine, std::string& o
         }
         if (ep[1] > STDERR_FILENO) {
             close(ep[1]);
+        }
+        if (!cwd.empty()) {
+            std::filesystem::path cwdPath(cwd);
+            if (chdir(cwdPath.c_str()) < 0) {
+                _exit(126);
+            }
         }
         execvp(cArgs[0], cArgs.data());
         _exit(127);
@@ -321,7 +329,13 @@ int CommandsSession::Run(const std::vector<std::string>& cmdLine, std::string& o
     std::vector<char> cmdBuf(winCmdLine.begin(), winCmdLine.end());
     cmdBuf.push_back('\0');
 
-    BOOL created = CreateProcessA(NULL, cmdBuf.data(), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+    std::string cwdStr;
+    if (!cwd.empty()) {
+        cwdStr = std::filesystem::path(cwd).string();
+    }
+
+    BOOL created = CreateProcessA(NULL, cmdBuf.data(), NULL, NULL, TRUE, 0, NULL,
+        cwdStr.empty() ? NULL : cwdStr.c_str(), &si, &pi);
 
     CloseHandle(hOutWrite);
     CloseHandle(hErrWrite);
@@ -351,10 +365,10 @@ int CommandsSession::Run(const std::vector<std::string>& cmdLine, std::string& o
     return static_cast<int>(processId);
 }
 
-int CommandsSession::RunWithShell(const std::string& cmdLine, std::string& out, std::string& err, bool wait) {
+int CommandsSession::RunWithShell(const std::string& cmdLine, std::string& out, std::string& err, bool wait,std::string cwd) {
 #if defined(__linux__)
-    return Run({"sh", "-c", cmdLine}, out, err, wait);
+    return Run({"sh", "-c", cmdLine}, out, err, wait, cwd);
 #elif defined(_WIN32) || defined(_WIN64)
-    return Run({"cmd.exe", "/c", cmdLine}, out, err, wait);
+    return Run({"cmd.exe", "/c", cmdLine}, out, err, wait, cwd);
 #endif
 }

@@ -26,8 +26,8 @@ public:
     CommandsSession(const CommandsSession&) = delete;
     CommandsSession& operator=(const CommandsSession&) = delete;
 
-    int Run(const std::vector<std::string>& cmdLine, std::string& out, std::string& err, bool wait = true);
-    int RunWithShell(const std::string& cmdLine, std::string& out, std::string& err, bool wait = true);
+    int Run(const std::vector<std::string>& cmdLine, std::string& out, std::string& err, bool wait = true,std::string cwd = "");
+    int RunWithShell(const std::string& cmdLine, std::string& out, std::string& err, bool wait = true,std::string cwd = "");
 
     bool IsBusy();
     int Wait();
